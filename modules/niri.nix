@@ -1,9 +1,24 @@
-{ config, lib, ... }:
-let cfg = config.my.niri; in
+{ config, lib, pkgs, ... }:
+let
+  cfg = config.my.niri;
+  # Window switcher, bound to Mod+Shift+TAB in the niri config.
+  # Was ~/.local/bin/nws.sh under home-manager; now a real binary on PATH.
+  nws = pkgs.writeShellApplication {
+    name = "nws";
+    runtimeInputs = with pkgs; [
+      niri
+      jq
+      wofi
+    ];
+    text = builtins.readFile ./nws.sh;
+  };
+in
 {
   options.my.niri.enable = lib.mkEnableOption "niri Wayland session";
 
   config = lib.mkIf cfg.enable {
+    environment.systemPackages = [ nws ];
+
     programs.niri.enable = true;
     programs.xwayland.enable = true;
 

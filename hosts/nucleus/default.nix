@@ -43,6 +43,35 @@
     variant = "";
   };
 
+  # Live symlinks into the self-managed dotfiles repo. Edits there take
+  # effect without a rebuild. The waybar/wofi/swaylock entries go away when
+  # noctalia replaces them.
+  my.dotfiles = {
+    links = {
+      # shell
+      ".bashrc" = "bash/.bashrc";
+      ".profile" = "bash/.profile";
+
+      # ssh
+      ".ssh/config" = "ssh/.ssh/config";
+
+      # app configs
+      ".config/git/config" = "git/.config/git/config";
+      ".config/mpv/mpv.conf" = "mpv/.config/mpv/mpv.conf";
+      ".config/niri" = "niri/.config/niri";
+      ".config/gtk-3.0/settings.ini" = "gtk/.config/gtk-3.0/settings.ini";
+      ".config/gtk-4.0/settings.ini" = "gtk/.config/gtk-4.0/settings.ini";
+      ".gtkrc-2.0" = "gtk/.gtkrc-2.0";
+
+      # superseded by noctalia later
+      ".config/waybar" = "waybar/.config/waybar";
+      ".config/wofi" = "wofi/.config/wofi";
+      ".config/swaylock" = "swaylock/.config/swaylock";
+    };
+
+    extraRules = [ "d %h/.ssh 0700 - - -" ];
+  };
+
   programs.nix-ld.enable = true;
   programs.wireshark.enable = true;
 
@@ -67,7 +96,16 @@
   environment.systemPackages = with pkgs; [
     kdePackages.fcitx5-configtool
 
-    inputs.awww.packages.${pkgs.stdenv.hostPlatform.system}.awww
+    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.twilight
+    (pkgs.writeShellApplication {
+      name = "ns";
+      runtimeInputs = with pkgs; [
+        fzf
+        nix-search-tv
+      ];
+      excludeShellChecks = [ "SC2016" ];
+      text = builtins.readFile "${pkgs.nix-search-tv.src}/nixpkgs.sh";
+    })
     ffmpeg
     jq
     ripgrep

@@ -3,22 +3,26 @@
     # always on
     ./nix.nix
     ./user.nix
-    ./git.nix
-    ./home-manager.nix
     ./profiles.nix
 
     # opt-in features
     ./audio.nix
+    ./awww.nix
     ./bluetooth.nix
     ./desktop.nix
+    ./dotfiles.nix
     ./fonts.nix
     ./gaming.nix
     ./i18n.nix
+    ./mpv.nix
     ./networking.nix
     ./niri.nix
     ./nvidia.nix
     ./onepassword.nix
     ./openssh.nix
+    ./shell.nix
+    ./ssh.nix
+    ./theming.nix
     ./tor.nix
     ./udev.nix
     ./virtualisation.nix

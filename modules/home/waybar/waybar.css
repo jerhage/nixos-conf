@@ -1,0 +1,98 @@
+/* === Global Styles === */
+* {
+  font-size: 12px;
+  font-family: "JetBrainsMono Nerd Font Propo";
+  font-weight: bold;
+}
+
+/* === Waybar Window === */
+window#waybar {
+  background: rgba(26, 27, 38, 0);
+  color: #e6b673;
+}
+
+#workspaces button {
+  margin: 0px 3px;
+  padding: 0px 3px;
+  border: 0;
+  border-radius: 10px;
+}
+
+#workspaces button:hover,
+#workspaces button.active {
+  border: 1px solid transparent;
+  color: #e6e1cf;
+}
+
+/* === Module Defaults === */
+#workspaces,
+#window,
+#memory,
+#clock,
+#idle_inhibitor,
+#cpu,
+#disk,
+#battery,
+#network,
+#tray,
+#pulseaudio,
+#custom-notification,
+#custom-startmenu,
+#custom-exit,
+#group-tray-expander,
+#custom-expand-icon,
+#mpris {
+  border-radius: 6px;
+  margin: 0px 1px;
+  padding: 0px 6px;
+  background: #000000;
+}
+
+/* === Individual Modules === */
+#memory {
+  color: #e6b673;
+}
+#clock {
+  color: #b8cc52;
+}
+#cpu {
+  color: #f3f4f5;
+}
+#disk {
+  color: #e6b673;
+}
+#network {
+  color: #ff8f40;
+}
+#tray {
+  color: #e6e1cf;
+}
+#pulseaudio {
+  color: #59c2ff;
+}
+#custom-notification {
+  color: #95e6cb;
+}
+#custom-startmenu {
+  color: #d2a6ff;
+}
+#custom-expand-icon {
+  color: #59c2ff;
+}
+#mpris {
+  color: #ff8f40;
+}
+#idle_inhibitor {
+  color: #ff8f40;
+}
+#battery {
+  color: #f07178;
+}
+#custom-exit {
+  color: #d2a6ff;
+}
+
+/* === Tray === */
+.tray-group-item {
+  padding: 0 4px;
+}

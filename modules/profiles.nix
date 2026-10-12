@@ -8,6 +8,7 @@ let cfg = config.my.profiles; in
 
   config = lib.mkMerge [
     (lib.mkIf cfg.base.enable {
+      my.cli.enable = lib.mkDefault true;
       my.shell.enable = lib.mkDefault true;
       my.sshAgent.enable = lib.mkDefault true;
       my.dotfiles.enable = lib.mkDefault true;

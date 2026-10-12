@@ -10,6 +10,7 @@ let cfg = config.my.shell; in
     programs.bash.completion.enable = true;
 
     environment.systemPackages = with pkgs; [
+      starship # ~/.bashrc runs `starship init bash`
       zoxide # ~/.bashrc runs `zoxide init bash`
     ];
   };

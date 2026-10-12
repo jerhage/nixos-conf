@@ -10,6 +10,7 @@
     # opt-in features
     ./audio.nix
     ./bluetooth.nix
+    ./cli.nix
     ./desktop.nix
     ./dns.nix
     ./devtools.nix

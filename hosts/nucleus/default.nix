@@ -18,6 +18,13 @@
   my.onepassword.enable = true;
   my.sshServer.enable = true;
   my.devtools.enable = true;
+  my.devtools.languages = [
+    "c"
+    "go"
+    "node"
+    "nix"
+    "rust"
+  ];
   my.tailscale.enable = true;
   my.tailscale.gui = true;
 
@@ -133,50 +140,23 @@
 
   environment.systemPackages = with pkgs; [
     # cli / system
-    bat
-    btop
-    dysk
-    fastfetch
-    fd
     ffmpeg
-    fzf
-    jq
     nh
-    pv
-    ripgrep
-    starship
     stow
-    tmux
-    unzip
     usbutils # lsusb, usb-devices
     wev # wayland event viewer
-    yazi
-    zstd
 
     # dev
-    cargo
-    gcc
-    git
-    gnumake
-    go
-    gopls
     lazydocker
     lazygit
-    neovim
-    nixfmt-rfc-style
-    nodejs_24
-    pnpm
     tree-sitter
-    typescript
 
     # network / security
-    curl
     nmap
     openvpn
     proton-vpn
     proton-pass
     rclone
-    wget
 
     # desktop applications
     anki

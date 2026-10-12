@@ -71,6 +71,12 @@ with a plain assignment.
   `my.kernel.branch`, `my.power.profile` and `my.greeter.backend`.
 - Which display manager greets at login is `my.greeter.backend`, set per host.
   Switching between them is one word; `none` means TTY login.
+- `my.cli.enable` is the baseline command-line set, on for every host via the
+  `base` profile. The test for inclusion is whether a headless machine would
+  want it; desktop-only tools belong in the host list.
+- `my.devtools.languages` takes a list of toolchain names (`c`, `go`, `node`,
+  `nix`, `rust`) and installs a complete set for each. Typed as an enum, so an
+  unknown name fails at eval.
 - `my.dns.systemdResolved` is off by default and exists as a documented escape
   hatch: turn it on if DNS starts resolving intermittently, which usually means
   NetworkManager, Tailscale and a VPN are racing over `/etc/resolv.conf`.

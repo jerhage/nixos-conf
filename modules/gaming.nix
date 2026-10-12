@@ -9,6 +9,10 @@ let cfg = config.my.gaming; in
       remotePlay.openFirewall = true;
       dedicatedServer.openFirewall = true;
 
+      # Do NOT also list steam/steam-run in environment.systemPackages. This
+      # module installs cfg.package and cfg.package.run itself, and cfg.package
+      # is an override that carries fontPackages/extraPackages in its FHS env.
+      # A manual pkgs.steam shadows it with a build that has no fonts.
     };
     programs.gamemode.enable = true;
 

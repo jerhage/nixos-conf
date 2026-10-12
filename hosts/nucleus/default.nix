@@ -10,11 +10,6 @@
   my.user = "jh";
   my.profiles.workstation.enable = true;
 
-  # Noctalia owns the wallpaper (wallpaper-set/next/random), so the awww
-  # daemon must not also run: both draw layer-shell backgrounds and the
-  # winner is arbitrary. Flip to true to go back to awww.
-  my.awww.enable = false;
-
   # machine-specific capabilities
   my.nvidia.enable = true;
   my.zram.enable = true;
@@ -23,11 +18,15 @@
   my.onepassword.enable = true;
   my.openssh.enable = true;
 
+  # Desktop on mains power: no reason to throttle.
+  my.power.profile = "performance";
+
   # Bootloader
   boot.loader = {
     systemd-boot.enable = true;
   };
-  boot.kernelPackages = pkgs.linuxPackages;
+
+  my.kernel.branch = "default";
 
   hardware.enableAllFirmware = true;
 
@@ -49,38 +48,38 @@
   };
 
   # Live symlinks into the self-managed dotfiles repo. Edits there take
-  # effect without a rebuild. The waybar/wofi/swaylock entries go away when
-  # noctalia replaces them.
+  # effect without a rebuild.
   my.dotfiles = {
     links = {
       # shell
       ".bashrc" = "bash/.bashrc";
       ".profile" = "bash/.profile";
 
-      # ssh
-      ".ssh/config" = "ssh/.ssh/config";
-
       # app configs
-      ".config/git/config" = "git/.config/git/config";
       ".config/mpv/mpv.conf" = "mpv/.config/mpv/mpv.conf";
       ".config/niri" = "niri/.config/niri";
       ".config/noctalia" = "noctalia/.config/noctalia";
       # Noctalia writes GUI/msg changes here, and this file loads AFTER
       # ~/.config/noctalia, so it wins. Linked so styling is tracked.
       ".local/state/noctalia/settings.toml" = "noctalia/.local/state/noctalia/settings.toml";
-      ".config/fontconfig/fonts.conf" = "fontconfig/.config/fontconfig/fonts.conf";
       ".config/gtk-3.0/settings.ini" = "gtk/.config/gtk-3.0/settings.ini";
       ".config/gtk-4.0/settings.ini" = "gtk/.config/gtk-4.0/settings.ini";
       ".gtkrc-2.0" = "gtk/.gtkrc-2.0";
-
-      # superseded by noctalia later
-      ".config/waybar" = "waybar/.config/waybar";
-      ".config/wofi" = "wofi/.config/wofi";
-      ".config/swaylock" = "swaylock/.config/swaylock";
     };
-
-    extraRules = [ "d %h/.ssh 0700 - - -" ];
   };
+
+  # Host aliases live here rather than ~/.ssh/config: this machine has a single
+  # user, and routing them through Nix makes them configurable per host.
+  # modules/ssh.nix contributes a "Host *" block that lands above this one. That
+  # only matters if both set the same option -- ssh takes the first value it
+  # finds per option. Verify with `ssh -G mbp` after changing either.
+  programs.ssh.extraConfig = ''
+    Host mbp
+      HostName 10.10.1.115
+      User jh
+      IdentityFile ~/.ssh/id_ed25519_nix
+      IdentitiesOnly yes
+  '';
 
   programs.nix-ld.enable = true;
   programs.wireshark.enable = true;
@@ -124,22 +123,15 @@
     fastfetch
     btop
     starship
-    waybar-mpris
     playerctl
-    waypaper
-    waybar
-    swaylock-effects
     nvidia-vaapi-driver
     nvidia-modprobe
-    swaynotificationcenter
     neovim
     wget
     wl-clipboard-rs
     git
     glib
-    steam-run
     curl
-    wlogout
     discord
     obs-studio
     spotify
@@ -149,7 +141,6 @@
     fzf
     lazygit
     lazydocker
-    wofi
     ghostty
     adw-gtk3
     papirus-icon-theme
@@ -164,7 +155,6 @@
     #ly
     fastfetch
     btop
-    steam
     pavucontrol
     # bitwarden-desktop
     docker
@@ -201,6 +191,7 @@
     wezterm
     # TODO: how to replace this. Need for stylua to install...
     unzip
+    usbutils # lsusb, usb-devices
     #blueman
     bluez
     proton-vpn

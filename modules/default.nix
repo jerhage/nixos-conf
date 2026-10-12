@@ -3,11 +3,12 @@
     # always on
     ./nix.nix
     ./user.nix
+    ./git.nix
+    ./kernel.nix
     ./profiles.nix
 
     # opt-in features
     ./audio.nix
-    ./awww.nix
     ./bluetooth.nix
     ./desktop.nix
     ./dotfiles.nix
@@ -21,6 +22,7 @@
     ./nvidia.nix
     ./onepassword.nix
     ./openssh.nix
+    ./power.nix
     ./shell.nix
     ./ssh.nix
     ./theming.nix

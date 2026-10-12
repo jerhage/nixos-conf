@@ -12,7 +12,6 @@ let cfg = config.my.profiles; in
       my.noctalia.enable = lib.mkDefault true;
       my.desktop.enable = lib.mkDefault true;
       my.theming.enable = lib.mkDefault true;
-      my.awww.enable = lib.mkDefault true;
 
       # hardware / system
       my.audio.enable = lib.mkDefault true;
@@ -20,6 +19,7 @@ let cfg = config.my.profiles; in
       my.fonts.enable = lib.mkDefault true;
       my.networking.enable = lib.mkDefault true;
       my.udev.enable = lib.mkDefault true;
+      my.power.enable = lib.mkDefault true;
       my.i18n.enable = lib.mkDefault true;
 
       # interactive user environment

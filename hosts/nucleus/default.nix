@@ -18,6 +18,11 @@
   my.onepassword.enable = true;
   my.sshServer.enable = true;
   my.devtools.enable = true;
+  my.tailscale.enable = true;
+  my.tailscale.gui = true;
+
+  # Flip this if DNS resolution starts failing intermittently -- see modules/dns.nix.
+  my.dns.systemdResolved = false;
   my.greeter.backend = "noctalia";
 
   # Desktop on mains power: no reason to throttle.
@@ -89,6 +94,17 @@
   # only matters if both set the same option -- ssh takes the first value it
   # finds per option. Verify with `ssh -G mbp` after changing either.
   programs.ssh.extraConfig = ''
+    # Prefer the tailnet, fall back to the LAN address. ssh takes the first
+    # value it finds per keyword, so this Match block has to come first.
+    #
+    # The test probes TCP reachability, not name resolution. tailscaled answers
+    # MagicDNS locally even when it is offline, so a `getent hosts` test returns
+    # success and ssh then fails -- observed with ProtonVPN running, which puts
+    # this host offline in its own tailnet. The exec runs on every connection:
+    # ~150ms when reachable, instant on refusal, 2s worst case.
+    Match host mbp exec "timeout 2 bash -c 'exec 3<>/dev/tcp/jeremys-macbook-pro/22' 2>/dev/null"
+      HostName jeremys-macbook-pro
+
     Host mbp
       HostName 10.10.1.115
       User jh
@@ -158,6 +174,7 @@
     nmap
     openvpn
     proton-vpn
+    proton-pass
     rclone
     wget
 

@@ -68,7 +68,16 @@ with a plain assignment.
 - The host package list is for applications that are not tied to a module.
 - Options that take a fixed set of values use `lib.types.enum`, so a typo fails
   at eval rather than silently resolving to something else. See
-  `my.kernel.branch` and `my.power.profile`.
+  `my.kernel.branch`, `my.power.profile` and `my.greeter.backend`.
+- Which display manager greets at login is `my.greeter.backend`, set per host.
+  Switching between them is one word; `none` means TTY login.
+- `my.dns.systemdResolved` is off by default and exists as a documented escape
+  hatch: turn it on if DNS starts resolving intermittently, which usually means
+  NetworkManager, Tailscale and a VPN are racing over `/etc/resolv.conf`.
+- `my.sync.pulls.<name>` declares an rsync pull from another host and generates
+  four aliases from it: `pull-<name>`, `-dry`, `-merge` and `-merge-dry`. The
+  flags live in `my.sync.flags` so the mirror-vs-merge distinction is defined
+  once rather than per alias.
 
 ## Dotfiles
 

@@ -11,6 +11,7 @@
     ./audio.nix
     ./bluetooth.nix
     ./desktop.nix
+    ./dns.nix
     ./devtools.nix
     ./dotfiles.nix
     ./fonts.nix
@@ -27,6 +28,7 @@
     ./power.nix
     ./shell.nix
     ./sync.nix
+    ./tailscale.nix
     ./ssh-agent.nix
     ./theming.nix
     ./keyboard.nix

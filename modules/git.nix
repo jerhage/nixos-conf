@@ -1,5 +1,7 @@
 { config, lib, ... }:
-let cfg = config.my.git; in
+let
+  cfg = config.my.git;
+in
 {
   options.my.git = {
     userName = lib.mkOption {

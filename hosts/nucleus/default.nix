@@ -121,7 +121,6 @@
       IdentitiesOnly yes
   '';
 
-
   users.users.${config.my.user} = {
     description = "Main User";
     extraGroups = [

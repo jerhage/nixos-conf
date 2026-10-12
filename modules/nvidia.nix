@@ -1,5 +1,12 @@
-{ config, lib, pkgs, ... }:
-let cfg = config.my.nvidia; in
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  cfg = config.my.nvidia;
+in
 {
   options.my.nvidia.enable = lib.mkEnableOption "NVIDIA proprietary graphics";
 

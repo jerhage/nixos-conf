@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.my.sync;
 in
@@ -71,11 +76,25 @@ in
     environment.shellAliases = lib.concatMapAttrs (
       name: p:
       let
-        run = extra: lib.concatStringsSep " " ([ "rsync" ] ++ cfg.flags ++ p.extraFlags ++ extra ++ [ p.from p.to ]);
+        run =
+          extra:
+          lib.concatStringsSep " " (
+            [ "rsync" ]
+            ++ cfg.flags
+            ++ p.extraFlags
+            ++ extra
+            ++ [
+              p.from
+              p.to
+            ]
+          );
       in
       {
         "pull-${name}" = run [ "--delete" ];
-        "pull-${name}-dry" = run [ "--delete" "--dry-run" ];
+        "pull-${name}-dry" = run [
+          "--delete"
+          "--dry-run"
+        ];
         "pull-${name}-merge" = run [ ];
         "pull-${name}-merge-dry" = run [ "--dry-run" ];
       }

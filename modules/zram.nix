@@ -1,5 +1,7 @@
 { config, lib, ... }:
-let cfg = config.my.zram; in
+let
+  cfg = config.my.zram;
+in
 {
   options.my.zram.enable = lib.mkEnableOption "zram compressed swap";
 

@@ -1,5 +1,12 @@
-{ config, lib, pkgs, ... }:
-let cfg = config.my.power; in
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  cfg = config.my.power;
+in
 {
   options.my.power = {
     enable = lib.mkEnableOption "power profiles and device battery reporting";

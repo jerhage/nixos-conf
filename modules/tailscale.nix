@@ -1,5 +1,12 @@
-{ config, lib, pkgs, ... }:
-let cfg = config.my.tailscale; in
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  cfg = config.my.tailscale;
+in
 {
   options.my.tailscale = {
     enable = lib.mkEnableOption "Tailscale mesh VPN";

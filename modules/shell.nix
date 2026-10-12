@@ -1,5 +1,12 @@
-{ config, lib, pkgs, ... }:
-let cfg = config.my.shell; in
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  cfg = config.my.shell;
+in
 {
   options.my.shell.enable = lib.mkEnableOption "interactive shell tooling";
 

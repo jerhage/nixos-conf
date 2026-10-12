@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.my.devtools;
 
@@ -22,7 +27,7 @@ let
       gopls
     ];
     nix = with pkgs; [
-      nixfmt-rfc-style
+      nixfmt
     ];
     node = with pkgs; [
       nodejs_24

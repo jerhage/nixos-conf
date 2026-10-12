@@ -1,5 +1,7 @@
 { config, lib, ... }:
-let cfg = config.my.sshAgent; in
+let
+  cfg = config.my.sshAgent;
+in
 {
   options.my.sshAgent.enable = lib.mkEnableOption "ssh agent for interactive sessions";
 

@@ -1,5 +1,12 @@
-{ config, lib, pkgs, ... }:
-let cfg = config.my.noctalia; in
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  cfg = config.my.noctalia;
+in
 {
   options.my.noctalia.enable = lib.mkEnableOption "Noctalia desktop shell";
 

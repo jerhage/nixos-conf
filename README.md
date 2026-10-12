@@ -86,6 +86,9 @@ with a plain assignment.
   four aliases from it: `pull-<name>`, `-dry`, `-merge` and `-merge-dry`. The
   flags live in `my.sync.flags` so the mirror-vs-merge distinction is defined
   once rather than per alias.
+- `nix fmt` formats every `.nix` file in the repo via `nixfmt-tree`. Run it
+  after changes. Passing a directory to `nixfmt` directly is deprecated, so
+  format single files as `nixfmt <file>` or use `nix fmt` for the tree.
 
 ## Per-project dev environments
 

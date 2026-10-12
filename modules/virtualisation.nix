@@ -1,5 +1,12 @@
-{ config, lib, pkgs, ... }:
-let cfg = config.my.virtualisation; in
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  cfg = config.my.virtualisation;
+in
 {
   options.my.virtualisation.enable = lib.mkEnableOption "libvirtd and podman containers";
 

@@ -1,5 +1,7 @@
 { config, lib, ... }:
-let cfg = config.my.networking; in
+let
+  cfg = config.my.networking;
+in
 {
   options.my.networking.enable = lib.mkEnableOption "NetworkManager-based networking";
 

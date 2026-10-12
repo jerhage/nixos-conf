@@ -1,5 +1,7 @@
 { config, lib, ... }:
-let cfg = config.my.profiles; in
+let
+  cfg = config.my.profiles;
+in
 {
   options.my.profiles = {
     base.enable = lib.mkEnableOption "interactive user environment, no graphics";

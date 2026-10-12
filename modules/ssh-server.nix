@@ -1,5 +1,7 @@
 { config, lib, ... }:
-let cfg = config.my.sshServer; in
+let
+  cfg = config.my.sshServer;
+in
 {
   options.my.sshServer.enable = lib.mkEnableOption "OpenSSH server (key-only)";
 

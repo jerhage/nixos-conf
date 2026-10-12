@@ -1,5 +1,12 @@
-{ config, lib, pkgs, ... }:
-let cfg = config.my.audio; in
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  cfg = config.my.audio;
+in
 {
   options.my.audio.enable = lib.mkEnableOption "PipeWire audio stack";
 

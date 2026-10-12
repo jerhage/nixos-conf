@@ -1,5 +1,7 @@
 { config, lib, ... }:
-let cfg = config.my.greeter; in
+let
+  cfg = config.my.greeter;
+in
 {
   options.my.greeter.backend = lib.mkOption {
     type = lib.types.enum [

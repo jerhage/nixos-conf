@@ -1,5 +1,12 @@
-{ config, lib, pkgs, ... }:
-let cfg = config.my.cli; in
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  cfg = config.my.cli;
+in
 {
   options.my.cli.enable = lib.mkEnableOption "baseline command-line tooling";
 

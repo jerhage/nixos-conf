@@ -1,5 +1,12 @@
-{ config, lib, pkgs, ... }:
-let cfg = config.my.niri; in
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  cfg = config.my.niri;
+in
 {
   options.my.niri.enable = lib.mkEnableOption "niri Wayland session";
 

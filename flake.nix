@@ -12,7 +12,7 @@
   };
 
   outputs =
-    { nixpkgs, ... }@inputs:
+    { self, nixpkgs, ... }@inputs:
     let
       inherit (nixpkgs) lib;
 
@@ -35,6 +35,12 @@
     in
     {
       nixosConfigurations = lib.genAttrs hostNames mkHost;
+
+      # `nix fmt` formats every .nix file in the repo. Covers the systems the
+      # hosts run on, so a new host on different hardware needs no edit here.
+      formatter = lib.genAttrs (lib.unique (
+        lib.mapAttrsToList (_: host: host.config.nixpkgs.hostPlatform.system) self.nixosConfigurations
+      )) (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
 
       # Project scaffolding: `nix flake init -t ~/nixos-conf#devshell`
       templates = {

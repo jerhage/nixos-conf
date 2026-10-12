@@ -1,5 +1,12 @@
-{ config, lib, pkgs, ... }:
-let cfg = config.my.theming; in
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  cfg = config.my.theming;
+in
 {
   options.my.theming.enable = lib.mkEnableOption "dark Qt theme and cursor packages";
 

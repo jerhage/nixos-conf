@@ -1,5 +1,12 @@
-{ config, lib, pkgs, ... }:
-let cfg = config.my.desktop; in
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  cfg = config.my.desktop;
+in
 {
   options.my.desktop.enable = lib.mkEnableOption "desktop portals, polkit and gvfs";
 

@@ -1,5 +1,7 @@
 { config, lib, ... }:
-let cfg = config.my.dns; in
+let
+  cfg = config.my.dns;
+in
 {
   options.my.dns.systemdResolved = lib.mkEnableOption ''
     systemd-resolved as the DNS resolver, with NetworkManager handing DNS to it

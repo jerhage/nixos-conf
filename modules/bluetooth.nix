@@ -1,5 +1,12 @@
-{ config, lib, pkgs, ... }:
-let cfg = config.my.bluetooth; in
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  cfg = config.my.bluetooth;
+in
 {
   options.my.bluetooth.enable = lib.mkEnableOption "Bluetooth with blueman";
 

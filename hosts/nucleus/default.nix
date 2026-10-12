@@ -18,6 +18,7 @@
   my.onepassword.enable = true;
   my.sshServer.enable = true;
   my.devtools.enable = true;
+  my.greeter.backend = "noctalia";
 
   # Desktop on mains power: no reason to throttle.
   my.power.profile = "performance";
@@ -82,6 +83,14 @@
   # modules/ssh.nix contributes a "Host *" block that lands above this one. That
   # only matters if both set the same option -- ssh takes the first value it
   # finds per option. Verify with `ssh -G mbp` after changing either.
+  environment.shellAliases = {
+    # Mirror, not merge: --delete removes local files the remote no longer has.
+    # --append-verify is deliberately absent; it assumes the local file is a
+    # prefix of the remote one, which is wrong when a file changes in place.
+    calibre-pull = "rsync -avhP --delete --timeout=60 mbp:~/calibre/ ~/calibre/";
+    calibre-pull-dry = "rsync -avhP --delete --timeout=60 --dry-run mbp:~/calibre/ ~/calibre/";
+  };
+
   programs.ssh.extraConfig = ''
     Host mbp
       HostName 10.10.1.115
@@ -122,6 +131,7 @@
     nh
     pv
     ripgrep
+    rsync
     starship
     stow
     tmux

@@ -12,21 +12,11 @@ let cfg = config.my.niri; in
     programs.niri.enable = true;
     programs.xwayland.enable = true;
 
-    services.displayManager.enable = true;
-    services.displayManager.ly.enable = true;
-
     environment.variables = {
       ELECTRON_OZONE_PLATFORM_HINT = "wayland";
       OZONE_PLATFORM = "wayland";
       GDK_BACKEND = "wayland";
     };
-
-    assertions = [
-      {
-        assertion = config.services.displayManager.ly.enable;
-        message = "my.niri needs a display manager; enable services.displayManager.ly on this host.";
-      }
-    ];
   };
 
   # NOTE: this module covers the compositor and session only. The shell that

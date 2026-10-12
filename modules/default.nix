@@ -15,6 +15,7 @@
     ./dotfiles.nix
     ./fonts.nix
     ./gaming.nix
+    ./greeter.nix
     ./i18n.nix
     ./mpv.nix
     ./networking.nix

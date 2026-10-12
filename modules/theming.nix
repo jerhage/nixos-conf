@@ -7,8 +7,10 @@ let cfg = config.my.theming; in
   # Only the packages and the options with no dotfile equivalent are here.
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
+      adw-gtk3
       adwaita-icon-theme
       catppuccin-cursors.mochaSapphire
+      papirus-icon-theme
     ];
 
     qt = {

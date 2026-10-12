@@ -4,6 +4,8 @@ let cfg = config.my.i18n; in
   options.my.i18n.enable = lib.mkEnableOption "locales and the fcitx5 input method";
 
   config = lib.mkIf cfg.enable {
+    environment.systemPackages = [ pkgs.kdePackages.fcitx5-configtool ];
+
   i18n.defaultLocale = "en_US.UTF-8";
   i18n.supportedLocales = [
     "en_US.UTF-8/UTF-8"

@@ -2,11 +2,22 @@
 let cfg = config.my.profiles; in
 {
   options.my.profiles = {
+    base.enable = lib.mkEnableOption "interactive user environment, no graphics";
     workstation.enable = lib.mkEnableOption "graphical workstation bundle";
   };
 
   config = lib.mkMerge [
+    (lib.mkIf cfg.base.enable {
+      my.shell.enable = lib.mkDefault true;
+      my.sshAgent.enable = lib.mkDefault true;
+      my.dotfiles.enable = lib.mkDefault true;
+      my.networking.enable = lib.mkDefault true;
+      my.i18n.enable = lib.mkDefault true;
+    })
+
     (lib.mkIf cfg.workstation.enable {
+      my.profiles.base.enable = lib.mkDefault true;
+
       # session
       my.niri.enable = lib.mkDefault true;
       my.noctalia.enable = lib.mkDefault true;
@@ -17,16 +28,10 @@ let cfg = config.my.profiles; in
       my.audio.enable = lib.mkDefault true;
       my.bluetooth.enable = lib.mkDefault true;
       my.fonts.enable = lib.mkDefault true;
-      my.networking.enable = lib.mkDefault true;
-      my.udev.enable = lib.mkDefault true;
+      my.keyboard.enable = lib.mkDefault true;
       my.power.enable = lib.mkDefault true;
-      my.i18n.enable = lib.mkDefault true;
 
-      # interactive user environment
-      # (would move to a `base` profile once a non-graphical host exists)
-      my.shell.enable = lib.mkDefault true;
-      my.ssh.enable = lib.mkDefault true;
-      my.dotfiles.enable = lib.mkDefault true;
+      # desktop applications
       my.mpv.enable = lib.mkDefault true;
     })
   ];

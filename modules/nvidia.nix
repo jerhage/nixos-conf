@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 let cfg = config.my.nvidia; in
 {
   options.my.nvidia.enable = lib.mkEnableOption "NVIDIA proprietary graphics";
@@ -9,6 +9,11 @@ let cfg = config.my.nvidia; in
       modesetting.enable = true;
       open = false;
     };
+
+    environment.systemPackages = with pkgs; [
+      nvidia-vaapi-driver
+      nvidia-modprobe
+    ];
 
     services.xserver.videoDrivers = [ "nvidia" ];
 

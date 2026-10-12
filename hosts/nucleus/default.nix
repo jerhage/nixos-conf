@@ -16,7 +16,8 @@
   my.gaming.enable = true;
   my.virtualisation.enable = true;
   my.onepassword.enable = true;
-  my.openssh.enable = true;
+  my.sshServer.enable = true;
+  my.devtools.enable = true;
 
   # Desktop on mains power: no reason to throttle.
   my.power.profile = "performance";
@@ -81,8 +82,6 @@
       IdentitiesOnly yes
   '';
 
-  programs.nix-ld.enable = true;
-  programs.wireshark.enable = true;
 
   users.users.${config.my.user} = {
     description = "Main User";
@@ -103,9 +102,75 @@
   };
 
   environment.systemPackages = with pkgs; [
-    kdePackages.fcitx5-configtool
+    # cli / system
+    bat
+    btop
+    dysk
+    fastfetch
+    fd
+    ffmpeg
+    fzf
+    jq
+    nh
+    pv
+    ripgrep
+    starship
+    stow
+    tmux
+    unzip
+    usbutils # lsusb, usb-devices
+    wev # wayland event viewer
+    yazi
+    zstd
 
+    # dev
+    cargo
+    gcc
+    git
+    gnumake
+    go
+    gopls
+    lazydocker
+    lazygit
+    neovim
+    nixfmt-rfc-style
+    nodejs_24
+    pnpm
+    tree-sitter
+    typescript
+
+    # network / security
+    curl
+    nmap
+    openvpn
+    proton-vpn
+    rclone
+    wget
+
+    # desktop applications
+    anki
+    calibre
+    calibre-web
+    cryptomator
+    discord
+    dropbox
+    gcolor3
+    ghostty
+    kdePackages.kate
+    obs-studio
+    obsidian
+    playerctl
+    qbittorrent
+    spotify
+    wezterm
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.twilight
+
+    # accounting
+    beancount
+    fava
+
+    claude-code
+
     (pkgs.writeShellApplication {
       name = "ns";
       runtimeInputs = with pkgs; [
@@ -115,153 +180,6 @@
       excludeShellChecks = [ "SC2016" ];
       text = builtins.readFile "${pkgs.nix-search-tv.src}/nixpkgs.sh";
     })
-    ffmpeg
-    jq
-    ripgrep
-    fzf
-    fd
-    fastfetch
-    btop
-    starship
-    playerctl
-    nvidia-vaapi-driver
-    nvidia-modprobe
-    neovim
-    wget
-    wl-clipboard-rs
-    git
-    glib
-    curl
-    discord
-    obs-studio
-    spotify
-    # lsd
-    bat
-    tmux
-    fzf
-    lazygit
-    lazydocker
-    ghostty
-    adw-gtk3
-    papirus-icon-theme
-    nh
-    nautilus
-    gnumake
-    go
-    gopls
-    cargo
-    #musl
-    gcc
-    #ly
-    fastfetch
-    btop
-    pavucontrol
-    # bitwarden-desktop
-    docker
-    docker-compose
-    xdg-desktop-portal-wlr
-    xdg-desktop-portal-gtk
-    xdg-desktop-portal-gnome
-    xdg-desktop-portal
-    polkit
-    nixfmt-rfc-style
-    obsidian
-    nmap
-    openvpn
-    #hashcat
-    #burpsuite
-    #caido
-    wireshark
-    kdePackages.kate
-    tree-sitter
-
-    anki
-    #wordlists
-    #rockyou
-    #seclists
-    #metasploit
-    #gobuster
-    #ffuf
-    #sqlmap
-    #john
-    #thc-hydra
-    qbittorrent
-    stow
-    yazi
-    wezterm
-    # TODO: how to replace this. Need for stylua to install...
-    unzip
-    usbutils # lsusb, usb-devices
-    #blueman
-    bluez
-    proton-vpn
-    #grub2
-    xwayland
-    xwayland-satellite
-    nodejs_24
-    typescript
-    pnpm
-    wev # wayland event viewer
-
-    pv
-    zstd
-    dropbox
-    rclone
-    cryptomator
-    calibre
-    calibre-web
-    # containers
-    podman
-    podman-compose
-    podman-desktop
-    # kime
-    adwaita-icon-theme # for fcitx icon?
-
-    beancount
-    fava
-
-    dysk
-    gcolor3
-    # like lutris but easier?
-    faugus-launcher
-    claude-code
-    lutris
   ];
-
-  # systemd.services.toggle-gpp-on-suspend = {
-  #   description = "Toggle GPP wake pins around suspend to prevent fan/spurious wake issues";
-  #   wantedBy = [ "sleep.target" ];
-  #   before = [ "sleep.target" ];
-  #
-  #   serviceConfig = {
-  #     Type = "oneshot";
-  #     RemainAfterExit = true;
-  #     ExecStart = ''
-  #       # Runs BEFORE suspend: disable wake pins
-  #       ${pkgs.bash}/bin/bash -c 'echo GPP0 > /proc/acpi/wakeup'
-  #       ${pkgs.bash}/bin/bash -c 'echo GPP8 > /proc/acpi/wakeup'
-  #     '';
-  #     ExecStop = ''
-  #       # Runs AFTER resume: restore wake pins
-  #       ${pkgs.bash}/bin/bash -c 'echo GPP0 > /proc/acpi/wakeup'
-  #       ${pkgs.bash}/bin/bash -c 'echo GPP8 > /proc/acpi/wakeup'
-  #     '';
-  #   };
-  # };
-  # systemd.services.disable-acpi-wakeup = {
-  #   description = "Disable ACPI wakeup on user login";
-  #
-  #   wantedBy = [ "multi-user.target" ];
-  #   after = [ "systemd-logind.service" ];
-  #
-  #   serviceConfig = {
-  #     Type = "oneshot";
-  #     ExecStart = [
-  #       "${pkgs.bash}/bin/bash -c 'echo GPP0 > /proc/acpi/wakeup'"
-  #       "${pkgs.bash}/bin/bash -c 'echo GPP8 > /proc/acpi/wakeup'"
-  #     ];
-  #   };
-  # };
-
   system.stateVersion = "25.11";
 }

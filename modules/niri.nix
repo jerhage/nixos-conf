@@ -1,9 +1,14 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 let cfg = config.my.niri; in
 {
   options.my.niri.enable = lib.mkEnableOption "niri Wayland session";
 
   config = lib.mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [
+      xwayland
+      xwayland-satellite
+    ];
+
     programs.niri.enable = true;
     programs.xwayland.enable = true;
 

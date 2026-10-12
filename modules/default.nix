@@ -11,6 +11,7 @@
     ./audio.nix
     ./bluetooth.nix
     ./desktop.nix
+    ./devtools.nix
     ./dotfiles.nix
     ./fonts.nix
     ./gaming.nix
@@ -21,13 +22,12 @@
     ./noctalia.nix
     ./nvidia.nix
     ./onepassword.nix
-    ./openssh.nix
+    ./ssh-server.nix
     ./power.nix
     ./shell.nix
-    ./ssh.nix
+    ./ssh-agent.nix
     ./theming.nix
-    ./tor.nix
-    ./udev.nix
+    ./keyboard.nix
     ./virtualisation.nix
     ./zram.nix
   ];

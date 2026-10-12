@@ -1,7 +1,7 @@
 { config, lib, ... }:
-let cfg = config.my.ssh; in
+let cfg = config.my.sshAgent; in
 {
-  options.my.ssh.enable = lib.mkEnableOption "ssh agent for interactive sessions";
+  options.my.sshAgent.enable = lib.mkEnableOption "ssh agent for interactive sessions";
 
   config = lib.mkIf cfg.enable {
     # Replaces home-manager's services.ssh-agent. Same socket path

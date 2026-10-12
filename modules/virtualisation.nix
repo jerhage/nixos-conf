@@ -1,10 +1,18 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 let cfg = config.my.virtualisation; in
 {
   options.my.virtualisation.enable = lib.mkEnableOption "libvirtd and podman containers";
 
   config = lib.mkIf cfg.enable {
     # enable containerization ( podman )
+    environment.systemPackages = with pkgs; [
+      docker
+      docker-compose
+      podman
+      podman-compose
+      podman-desktop
+    ];
+
     programs.virt-manager.enable = true;
     virtualisation.containers.enable = true;
     virtualisation = {

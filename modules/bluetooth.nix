@@ -26,6 +26,8 @@ let cfg = config.my.bluetooth; in
       };
     };
 
+    environment.systemPackages = [ pkgs.bluez ];
+
     services.blueman.enable = true;
 
     # blueman ships an XDG autostart entry, which systemd turns into

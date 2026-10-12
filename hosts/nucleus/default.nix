@@ -27,8 +27,6 @@
     systemd-boot.enable = true;
   };
 
-  my.kernel.branch = "default";
-
   hardware.enableAllFirmware = true;
 
   networking = {
@@ -66,6 +64,16 @@
       ".config/gtk-3.0/settings.ini" = "gtk/.config/gtk-3.0/settings.ini";
       ".config/gtk-4.0/settings.ini" = "gtk/.config/gtk-4.0/settings.ini";
       ".gtkrc-2.0" = "gtk/.gtkrc-2.0";
+
+      # migrated off stow
+      ".config/ghostty" = "ghostty/.config/ghostty";
+      ".config/kime" = "kime/.config/kime";
+      ".config/nvim" = "nvim/.config/nvim";
+      ".config/starship" = "starship/.config/starship";
+      ".config/starship.toml" = "starship/.config/starship.toml";
+      ".config/tmux" = "tmux/.config/tmux";
+      ".config/wezterm" = "wezterm/.config/wezterm";
+      ".config/yazi" = "yazi/.config/yazi";
     };
   };
 

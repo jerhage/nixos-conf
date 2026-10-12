@@ -28,5 +28,7 @@ in
     '';
   };
 
-  config.boot.kernelPackages = branches.${cfg.branch};
+  # mkDefault so a host can still set boot.kernelPackages directly for a branch
+  # that is not in the enum, without colliding with this module.
+  config.boot.kernelPackages = lib.mkDefault branches.${cfg.branch};
 }

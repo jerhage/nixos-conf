@@ -20,6 +20,10 @@
   # my.virtualisation.enable = true;
   # my.openssh.enable = true;
 
+  # Kernel branch. Omit for the nixpkgs default (same as NixOS would pick).
+  # One of: default, latest, zen, xanmod, lts_6_12
+  # my.kernel.branch = "latest";
+
   # Override the shared git identity if this machine needs a different one.
   # my.git.userEmail = "work@example.com";
 

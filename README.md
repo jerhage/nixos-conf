@@ -19,6 +19,10 @@ nixos-rebuild build --flake ~/nixos-conf        # builds ./result, activates not
 nixos-rebuild dry-activate --flake ~/nixos-conf # shows which units a switch would touch
 ```
 
+`build` leaves a `result` symlink, which Nix registers as a GC root -- it will
+pin that whole system closure until removed. `rm -f result` when done, or use
+`--no-link`.
+
 ## Add a new host
 
 1. On the new machine, clone this repo.
@@ -39,11 +43,32 @@ The host directory name *is* the hostname; `flake.nix` contains no hostnames.
 | `flake.nix` | Discovers hosts via `readDir ./hosts`. Never edited to add a host. |
 | `modules/` | Shared NixOS modules, each behind a `my.<name>.enable` option. |
 | `modules/default.nix` | Imports every module. Every host gets all of them; they do nothing unless enabled. |
-| `modules/profiles.nix` | Bundles modules for a kind of machine (`my.profiles.workstation`). |
+| `modules/profiles.nix` | Bundles modules for a kind of machine (`base`, `workstation`). |
 | `hosts/<name>/` | Per-machine config and its `hardware-configuration.nix`. |
 | `templates/host/` | Starting point for a new host. |
 
-Always on regardless of profile: `nix.nix`, `user.nix`, `profiles.nix`.
+Always on regardless of profile: `nix.nix`, `user.nix`, `git.nix`, `kernel.nix`,
+`profiles.nix`.
+
+## Profiles
+
+`my.profiles.base` is the interactive-but-headless set: shell, ssh agent,
+dotfile links, networking, input methods. `my.profiles.workstation` turns on
+`base` plus the graphical session: compositor, shell, portals, theming, audio,
+bluetooth, fonts, input device rules and power management. A host normally sets
+one profile and then only its hardware and machine-specific bits.
+
+Everything a profile sets uses `lib.mkDefault`, so a host can override any of it
+with a plain assignment.
+
+## Conventions
+
+- Packages live in the module that owns the feature, not in the host list, so
+  enabling a feature brings its tools along without the host restating them.
+- The host package list is for applications that are not tied to a module.
+- Options that take a fixed set of values use `lib.types.enum`, so a typo fails
+  at eval rather than silently resolving to something else. See
+  `my.kernel.branch` and `my.power.profile`.
 
 ## Dotfiles
 
@@ -54,7 +79,7 @@ format. Nix does not own their contents -- it only declares the symlinks, via
 ```nix
 my.dotfiles.links = {
   ".bashrc" = "bash/.bashrc";
-  ".config/niri" = "niri/.config/niri";
+  ".config/nvim" = "nvim/.config/nvim";
 };
 ```
 
@@ -62,5 +87,12 @@ Each entry becomes a systemd-tmpfiles `L+` rule, applied on every switch and
 again at login. The symlink points at the real file in the repo, so edits take
 effect immediately with no rebuild. It is a declarative `stow`.
 
-Two caveats: removing an entry does not remove the symlink it already created,
-and there is no validation that the dotfiles repo is present.
+Three caveats:
+
+- Removing an entry does not remove the symlink it already created. Prune by
+  hand.
+- There is no validation that the dotfiles repo is present; a missing source
+  gives a dangling symlink.
+- Do not point `stow` at a path that `my.dotfiles.links` also manages. Both
+  create symlinks and neither knows about the other, so whichever ran last
+  wins and the result depends on ordering. Pick one mechanism per path.

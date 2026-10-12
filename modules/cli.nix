@@ -18,20 +18,32 @@ in
       bat
       btop
       curl
+      dnsutils # dig
       dysk
       fastfetch
       fd
+      file
       fzf
       git
       jq
+      lsof
       neovim
+      p7zip # 7z, reads rar
       pv
       ripgrep
       tmux
+      tree
       unzip
       wget
       yazi
+      zip
       zstd
     ];
+
+    # .bashrc only covers interactive shells; this reaches GUI apps and units.
+    environment.variables = {
+      EDITOR = "nvim";
+      VISUAL = "nvim";
+    };
   };
 }

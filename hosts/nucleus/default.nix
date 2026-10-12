@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   inputs,
   ...
@@ -167,6 +168,7 @@
     dropbox
     gcolor3
     ghostty
+    imv
     kdePackages.kate
     obs-studio
     obsidian
@@ -182,6 +184,27 @@
 
     claude-code
 
+    # nvim.desktop is Terminal=true, which needs a terminal resolver this
+    # system does not have. This names ghostty instead.
+    (pkgs.makeDesktopItem {
+      name = "nvim-ghostty";
+      desktopName = "Neovim";
+      icon = "nvim";
+      exec = "${lib.getExe pkgs.ghostty} -e ${lib.getExe pkgs.neovim} %F";
+      terminal = false;
+      categories = [
+        "Utility"
+        "TextEditor"
+      ];
+      mimeTypes = [
+        "text/plain"
+        "text/markdown"
+        "text/csv"
+        "application/json"
+        "application/x-shellscript"
+      ];
+    })
+
     (pkgs.writeShellApplication {
       name = "ns";
       runtimeInputs = with pkgs; [
@@ -192,5 +215,15 @@
       text = builtins.readFile "${pkgs.nix-search-tv.src}/nixpkgs.sh";
     })
   ];
+
+  # Otherwise whatever registered last wins; calibre was claiming text/plain.
+  xdg.mime.defaultApplications = {
+    "text/plain" = "nvim-ghostty.desktop";
+    "text/markdown" = "nvim-ghostty.desktop";
+    "text/csv" = "nvim-ghostty.desktop";
+    "application/json" = "nvim-ghostty.desktop";
+    "application/x-shellscript" = "nvim-ghostty.desktop";
+  };
+
   system.stateVersion = "25.11";
 }

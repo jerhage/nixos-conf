@@ -45,6 +45,7 @@ The host directory name *is* the hostname; `flake.nix` contains no hostnames.
 | `modules/default.nix` | Imports every module. Every host gets all of them; they do nothing unless enabled. |
 | `modules/profiles.nix` | Bundles modules for a kind of machine (`base`, `workstation`). |
 | `hosts/<name>/` | Per-machine config and its `hardware-configuration.nix`. |
+| `pkgs/<name>/` | Packages defined here rather than in nixpkgs, pulled in with `callPackage`. |
 | `templates/host/` | Starting point for a new host. |
 
 Always on regardless of profile: `nix.nix`, `user.nix`, `git.nix`, `kernel.nix`,

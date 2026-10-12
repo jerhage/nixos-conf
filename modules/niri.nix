@@ -11,8 +11,9 @@ in
   options.my.niri.enable = lib.mkEnableOption "niri Wayland session";
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      xwayland-satellite
+    environment.systemPackages = [
+      pkgs.xwayland-satellite
+      (pkgs.callPackage ../pkgs/niri-keys { })
     ];
 
     programs.niri.enable = true;

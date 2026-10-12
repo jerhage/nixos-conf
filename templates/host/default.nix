@@ -22,7 +22,7 @@
   # my.zram.enable = true;
   # my.gaming.enable = true;
   # my.virtualisation.enable = true;
-  # my.sshServer.enable = true;
+  # my.ssh.server.enable = true;
   # my.devtools.enable = true;
 
   # Kernel branch. Omit for the nixpkgs default (same as NixOS would pick).

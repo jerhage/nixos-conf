@@ -12,7 +12,7 @@ in
     (lib.mkIf cfg.base.enable {
       my.cli.enable = lib.mkDefault true;
       my.shell.enable = lib.mkDefault true;
-      my.sshAgent.enable = lib.mkDefault true;
+      my.ssh.agent.enable = lib.mkDefault true;
       my.dotfiles.enable = lib.mkDefault true;
       my.networking.enable = lib.mkDefault true;
       my.i18n.enable = lib.mkDefault true;

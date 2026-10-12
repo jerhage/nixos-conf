@@ -25,12 +25,11 @@
     ./noctalia.nix
     ./nvidia.nix
     ./onepassword.nix
-    ./ssh-server.nix
     ./power.nix
     ./shell.nix
     ./sync.nix
     ./tailscale.nix
-    ./ssh-agent.nix
+    ./ssh.nix
     ./theming.nix
     ./keyboard.nix
     ./virtualisation.nix

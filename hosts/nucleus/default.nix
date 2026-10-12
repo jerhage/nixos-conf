@@ -16,7 +16,7 @@
   my.gaming.enable = true;
   my.virtualisation.enable = true;
   my.onepassword.enable = true;
-  my.sshServer.enable = true;
+  my.ssh.server.enable = true;
   my.devtools.enable = true;
   my.devtools.languages = [
     "c"
@@ -127,7 +127,6 @@
       "networkmanager"
       "wireshark"
       "docker"
-      "plugdev" # zsa moonlander udev
     ];
 
     packages = with pkgs; [

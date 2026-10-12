@@ -20,9 +20,11 @@
   my.devtools.enable = true;
   my.devtools.languages = [
     "c"
+    "deno"
+    "elixir"
     "go"
-    "node"
     "nix"
+    "node"
     "rust"
   ];
   my.tailscale.enable = true;

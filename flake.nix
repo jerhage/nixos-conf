@@ -35,5 +35,17 @@
     in
     {
       nixosConfigurations = lib.genAttrs hostNames mkHost;
+
+      # Project scaffolding: `nix flake init -t ~/nixos-conf#devshell`
+      templates = {
+        devshell = {
+          path = ./templates/devshell;
+          description = "Plain-flake dev shell with direnv integration";
+        };
+        devenv = {
+          path = ./templates/devenv;
+          description = "devenv dev shell, for language helpers and services";
+        };
+      };
     };
 }

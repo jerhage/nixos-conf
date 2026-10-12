@@ -52,11 +52,12 @@ Always on regardless of profile: `nix.nix`, `user.nix`, `git.nix`, `kernel.nix`,
 
 ## Profiles
 
-`my.profiles.base` is the interactive-but-headless set: shell, ssh agent,
-dotfile links, networking, input methods. `my.profiles.workstation` turns on
-`base` plus the graphical session: compositor, shell, portals, theming, audio,
-bluetooth, fonts, input device rules and power management. A host normally sets
-one profile and then only its hardware and machine-specific bits.
+`my.profiles.base` is the interactive-but-headless set: command-line tools, bash
+configuration, ssh agent, dotfile links, networking and input methods.
+`my.profiles.workstation` turns on `base` plus the graphical session: compositor,
+desktop shell, portals, theming, audio, bluetooth, fonts, input device rules,
+power management and mpv. A host normally sets one profile and then only its
+hardware and machine-specific bits.
 
 Everything a profile sets uses `lib.mkDefault`, so a host can override any of it
 with a plain assignment.
@@ -74,9 +75,10 @@ with a plain assignment.
 - `my.cli.enable` is the baseline command-line set, on for every host via the
   `base` profile. The test for inclusion is whether a headless machine would
   want it; desktop-only tools belong in the host list.
-- `my.devtools.languages` takes a list of toolchain names (`c`, `go`, `node`,
-  `nix`, `rust`) and installs a complete set for each. Typed as an enum, so an
-  unknown name fails at eval.
+- `my.devtools.languages` takes a list of toolchain names and installs a
+  complete set for each -- `rust` means rustc and rust-analyzer, not just cargo.
+  Typed as an enum, so an unknown name fails at eval. Current sets: bun, c,
+  deno, elixir, go, nix, node, python, rust.
 - `my.dns.systemdResolved` is off by default and exists as a documented escape
   hatch: turn it on if DNS starts resolving intermittently, which usually means
   NetworkManager, Tailscale and a VPN are racing over `/etc/resolv.conf`.
@@ -84,6 +86,23 @@ with a plain assignment.
   four aliases from it: `pull-<name>`, `-dry`, `-merge` and `-merge-dry`. The
   flags live in `my.sync.flags` so the mirror-vs-merge distinction is defined
   once rather than per alias.
+
+## Per-project dev environments
+
+System-wide toolchains come from `my.devtools.languages`. For a project that
+needs a specific runtime version, scaffold a shell instead of installing it
+globally:
+
+```sh
+nix flake init -t ~/nixos-conf#devshell   # plain flake, just packages on PATH
+nix flake init -t ~/nixos-conf#devenv     # devenv, for language helpers and services
+direnv allow                              # both ship an .envrc
+```
+
+Versions are pinned by the template's own `flake.lock`, so a project stays on
+its runtime regardless of what the system has. `programs.direnv` with
+`nix-direnv` is enabled by `my.devtools`, so entering a directory enters its
+shell.
 
 ## Dotfiles
 

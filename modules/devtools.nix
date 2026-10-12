@@ -3,21 +3,36 @@ let
   cfg = config.my.devtools;
 
   languageSets = {
+    bun = with pkgs; [
+      bun
+    ];
     c = with pkgs; [
       gcc
       gnumake
     ];
+    deno = with pkgs; [
+      deno
+    ];
+    elixir = with pkgs; [
+      elixir
+      elixir-ls
+    ];
     go = with pkgs; [
       go
       gopls
+    ];
+    nix = with pkgs; [
+      nixfmt-rfc-style
     ];
     node = with pkgs; [
       nodejs_24
       pnpm
       typescript
     ];
-    nix = with pkgs; [
-      nixfmt-rfc-style
+    python = with pkgs; [
+      python3
+      ruff
+      uv
     ];
     rust = with pkgs; [
       cargo
@@ -61,6 +76,14 @@ in
       # Adds the `wireshark` group and the dumpcap capability wrapper.
       programs.wireshark.enable = true;
       environment.systemPackages = [ pkgs.wireshark ];
+
+      # Per-project dev shells, as scaffolded by the flake templates. The
+      # module installs the bash hook itself, so ~/.bashrc needs no direnv line.
+      # nix-direnv caches the shell so `cd` does not re-evaluate the flake.
+      programs.direnv = {
+        enable = true;
+        nix-direnv.enable = true;
+      };
     })
   ];
 }

@@ -9,6 +9,7 @@ let cfg = config.my.profiles; in
     (lib.mkIf cfg.workstation.enable {
       # session
       my.niri.enable = lib.mkDefault true;
+      my.noctalia.enable = lib.mkDefault true;
       my.desktop.enable = lib.mkDefault true;
       my.theming.enable = lib.mkDefault true;
       my.awww.enable = lib.mkDefault true;

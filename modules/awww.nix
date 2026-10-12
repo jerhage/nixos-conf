@@ -19,6 +19,9 @@ in
       wantedBy = [ "graphical-session.target" ];
       serviceConfig = {
         ExecStart = "${awww}/bin/awww-daemon";
+        # The daemon holds the current wallpaper in memory only, so a restart
+        # comes up blank without this.
+        ExecStartPost = "${awww}/bin/awww restore";
         Restart = "always";
         RestartSec = 10;
       };

@@ -39,10 +39,9 @@ in
     ];
   };
 
-  # NOTE: the shell components that run *inside* the session (bar, launcher,
-  # lock screen, notification daemon) are intentionally NOT configured here.
-  # They live in two places, so they can be swapped independently of the
-  # compositor:
-  #   - packages:      environment.systemPackages in the host file
-  #   - user configs:  modules/home/{waybar,wofi}.nix and modules/home/niri/
+  # NOTE: this module covers the compositor and session only. The shell that
+  # runs *inside* it (bar, launcher, lock screen, notifications) is a separate
+  # module, so the two can be swapped independently. The niri config itself is
+  # not managed here at all: programs.niri has no config option, and
+  # ~/.config/niri is symlinked to the dotfiles repo by my.dotfiles.links.
 }

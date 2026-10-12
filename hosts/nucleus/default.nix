@@ -10,6 +10,11 @@
   my.user = "jh";
   my.profiles.workstation.enable = true;
 
+  # Noctalia owns the wallpaper (wallpaper-set/next/random), so the awww
+  # daemon must not also run: both draw layer-shell backgrounds and the
+  # winner is arbitrary. Flip to true to go back to awww.
+  my.awww.enable = false;
+
   # machine-specific capabilities
   my.nvidia.enable = true;
   my.zram.enable = true;
@@ -59,6 +64,11 @@
       ".config/git/config" = "git/.config/git/config";
       ".config/mpv/mpv.conf" = "mpv/.config/mpv/mpv.conf";
       ".config/niri" = "niri/.config/niri";
+      ".config/noctalia" = "noctalia/.config/noctalia";
+      # Noctalia writes GUI/msg changes here, and this file loads AFTER
+      # ~/.config/noctalia, so it wins. Linked so styling is tracked.
+      ".local/state/noctalia/settings.toml" = "noctalia/.local/state/noctalia/settings.toml";
+      ".config/fontconfig/fonts.conf" = "fontconfig/.config/fontconfig/fonts.conf";
       ".config/gtk-3.0/settings.ini" = "gtk/.config/gtk-3.0/settings.ini";
       ".config/gtk-4.0/settings.ini" = "gtk/.config/gtk-4.0/settings.ini";
       ".gtkrc-2.0" = "gtk/.gtkrc-2.0";

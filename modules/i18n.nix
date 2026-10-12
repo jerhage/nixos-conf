@@ -36,10 +36,9 @@ i18n.inputMethod = {
     };
   };
 
-  environment.sessionVariables = {
-    XMODIFIERS = "@im=fcitx";
-    GTK_IM_MODULE = "fcitx";
-    QT_IM_MODULE = "fcitx";
-  };
+  # No IM env vars here on purpose. With waylandFrontend = true the fcitx5
+  # module sets XMODIFIERS (for XWayland) and deliberately omits
+  # GTK_IM_MODULE/QT_IM_MODULE so Wayland apps use text-input-v3 instead of
+  # the legacy IM-module path. Setting them back breaks that.
   };
 }

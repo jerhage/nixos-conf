@@ -17,6 +17,7 @@
     ./mpv.nix
     ./networking.nix
     ./niri.nix
+    ./noctalia.nix
     ./nvidia.nix
     ./onepassword.nix
     ./openssh.nix

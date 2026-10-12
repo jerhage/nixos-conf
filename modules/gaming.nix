@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 let cfg = config.my.gaming; in
 {
   options.my.gaming.enable = lib.mkEnableOption "Steam, gamemode and controller support";
@@ -8,6 +8,7 @@ let cfg = config.my.gaming; in
       enable = true;
       remotePlay.openFirewall = true;
       dedicatedServer.openFirewall = true;
+
     };
     programs.gamemode.enable = true;
 

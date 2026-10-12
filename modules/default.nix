@@ -26,6 +26,7 @@
     ./ssh-server.nix
     ./power.nix
     ./shell.nix
+    ./sync.nix
     ./ssh-agent.nix
     ./theming.nix
     ./keyboard.nix

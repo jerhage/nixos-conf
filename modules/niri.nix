@@ -26,9 +26,7 @@ in
     };
   };
 
-  # NOTE: this module covers the compositor and session only. The shell that
-  # runs *inside* it (bar, launcher, lock screen, notifications) is a separate
-  # module, so the two can be swapped independently. The niri config itself is
-  # not managed here at all: programs.niri has no config option, and
+  # Compositor and session only; the shell running inside it is my.noctalia, so
+  # the two can be swapped independently. programs.niri has no config option --
   # ~/.config/niri is symlinked to the dotfiles repo by my.dotfiles.links.
 }

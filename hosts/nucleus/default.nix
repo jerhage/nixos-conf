@@ -99,20 +99,13 @@
     to = "~/calibre/";
   };
 
-  # Host aliases live here rather than ~/.ssh/config: this machine has a single
-  # user, and routing them through Nix makes them configurable per host.
-  # modules/ssh.nix contributes a "Host *" block that lands above this one. That
-  # only matters if both set the same option -- ssh takes the first value it
-  # finds per option. Verify with `ssh -G mbp` after changing either.
+  # Host aliases live here rather than ~/.ssh/config so they stay per-host Nix
+  # config. modules/ssh.nix adds a "Host *" block above this one.
   programs.ssh.extraConfig = ''
-    # Prefer the tailnet, fall back to the LAN address. ssh takes the first
-    # value it finds per keyword, so this Match block has to come first.
-    #
-    # The test probes TCP reachability, not name resolution. tailscaled answers
-    # MagicDNS locally even when it is offline, so a `getent hosts` test returns
-    # success and ssh then fails -- observed with ProtonVPN running, which puts
-    # this host offline in its own tailnet. The exec runs on every connection:
-    # ~150ms when reachable, instant on refusal, 2s worst case.
+    # Prefer the tailnet, fall back to the LAN address; ssh takes the first
+    # value per keyword, so this Match comes first. The exec probes TCP rather
+    # than resolving a name, because tailscaled answers MagicDNS even when
+    # offline. ~150ms when reachable, 2s worst case.
     Match host mbp exec "timeout 2 bash -c 'exec 3<>/dev/tcp/jeremys-macbook-pro/22' 2>/dev/null"
       HostName jeremys-macbook-pro
 

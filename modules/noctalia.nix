@@ -10,15 +10,8 @@ in
 {
   options.my.noctalia.enable = lib.mkEnableOption "Noctalia desktop shell";
 
-  # Noctalia is configured entirely by TOML in ~/.config/noctalia, which is
-  # symlinked to the dotfiles repo by my.dotfiles.links. It watches those files
-  # and hot-reloads, so config changes never need a rebuild. Nix only installs
-  # the package and runs it.
-  #
-  # Keybinds live in the niri config and drive it over `noctalia msg`:
-  #   panel-toggle launcher | bar-toggle | window-switcher
-  #   session lock|logout|suspend|reboot|shutdown
-  #   wallpaper-set|next|random | notification-dnd-toggle | clipboard-*
+  # Configured by TOML in ~/.config/noctalia, symlinked to the dotfiles repo and
+  # hot-reloaded, so config changes need no rebuild. Nix installs and runs it.
   config = lib.mkIf cfg.enable {
     environment.systemPackages = [ pkgs.noctalia ];
 
@@ -27,9 +20,8 @@ in
       partOf = [ "graphical-session.target" ];
       after = [ "graphical-session.target" ];
       wantedBy = [ "graphical-session.target" ];
-      # A systemd user service gets only a minimal default PATH, so the
-      # launcher cannot find anything from environment.systemPackages.
-      # Mirror the interactive session PATH instead.
+      # A user service gets a minimal PATH, so the launcher finds nothing from
+      # environment.systemPackages. Mirror the interactive session PATH.
       path = [
         "/run/wrappers"
         "/etc/profiles/per-user/${config.my.user}"

@@ -1,6 +1,5 @@
 {
   config,
-  lib,
   pkgs,
   inputs,
   ...
@@ -31,8 +30,10 @@
   my.tailscale.enable = true;
   my.tailscale.gui = true;
 
-  # Flip this if DNS resolution starts failing intermittently -- see modules/dns.nix.
-  my.dns.systemdResolved = false;
+  # Without this, Tailscale owned /etc/resolv.conf alone and DNS fails at
+  # login until the link was toggled -- see modules/dns.nix.
+  my.shell.history = "fzf";
+  my.dns.systemdResolved = true;
   my.greeter.backend = "noctalia";
 
   # Desktop on mains power: no reason to throttle.
@@ -184,26 +185,7 @@
 
     claude-code
 
-    # nvim.desktop is Terminal=true, which needs a terminal resolver this
-    # system does not have. This names ghostty instead.
-    (pkgs.makeDesktopItem {
-      name = "nvim-ghostty";
-      desktopName = "Neovim";
-      icon = "nvim";
-      exec = "${lib.getExe pkgs.ghostty} -e ${lib.getExe pkgs.neovim} %F";
-      terminal = false;
-      categories = [
-        "Utility"
-        "TextEditor"
-      ];
-      mimeTypes = [
-        "text/plain"
-        "text/markdown"
-        "text/csv"
-        "application/json"
-        "application/x-shellscript"
-      ];
-    })
+    (pkgs.callPackage ../../pkgs/nvim-desktop-item { })
 
     (pkgs.writeShellApplication {
       name = "ns";

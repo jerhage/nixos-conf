@@ -27,12 +27,17 @@
     "node"
     "rust"
   ];
+  my.i18n.languages = [
+    "korean"
+    "japanese"
+  ];
   my.tailscale.enable = true;
   my.tailscale.gui = true;
 
-  # Without this, Tailscale owned /etc/resolv.conf alone and DNS fails at
-  # login until the link was toggled -- see modules/dns.nix.
   my.shell.history = "fzf";
+
+  # Without this, Tailscale owned /etc/resolv.conf alone and DNS failed at
+  # login until the link was toggled -- see modules/dns.nix.
   my.dns.systemdResolved = true;
   my.greeter.backend = "noctalia";
 
@@ -84,7 +89,13 @@
 
       # migrated off stow
       ".config/ghostty" = "ghostty/.config/ghostty";
-      ".config/kime" = "kime/.config/kime";
+      # Individual files, not the directory: conf/cached_layouts is a
+      # regenerated cache, and fcitx5 writes these on GUI changes.
+      ".config/fcitx5/profile" = "fcitx5/.config/fcitx5/profile";
+      ".config/fcitx5/config" = "fcitx5/.config/fcitx5/config";
+      ".config/fcitx5/conf/hangul.conf" = "fcitx5/.config/fcitx5/conf/hangul.conf";
+      ".config/fcitx5/conf/keyboard.conf" = "fcitx5/.config/fcitx5/conf/keyboard.conf";
+      ".config/fcitx5/conf/notifications.conf" = "fcitx5/.config/fcitx5/conf/notifications.conf";
       ".config/nvim" = "nvim/.config/nvim";
       ".config/starship" = "starship/.config/starship";
       ".config/starship.toml" = "starship/.config/starship.toml";

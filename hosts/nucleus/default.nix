@@ -44,6 +44,12 @@
   # Desktop on mains power: no reason to throttle.
   my.power.profile = "performance";
 
+  # Firmware updates for LVFS-supported devices. Not this board's BIOS.
+  services.fwupd.enable = true;
+
+  # This board's S3 never resumes; s2idle avoids the firmware handoff.
+  boot.kernelParams = [ "mem_sleep_default=s2idle" ];
+
   # Bootloader
   boot.loader = {
     systemd-boot.enable = true;
@@ -113,10 +119,8 @@
   # Host aliases live here rather than ~/.ssh/config so they stay per-host Nix
   # config. modules/ssh.nix adds a "Host *" block above this one.
   programs.ssh.extraConfig = ''
-    # Prefer the tailnet, fall back to the LAN address; ssh takes the first
-    # value per keyword, so this Match comes first. The exec probes TCP rather
-    # than resolving a name, because tailscaled answers MagicDNS even when
-    # offline. ~150ms when reachable, 2s worst case.
+    # Prefer the tailnet, fall back to the LAN. Probes TCP rather than
+    # resolving, because tailscaled answers MagicDNS while offline.
     Match host mbp exec "timeout 2 bash -c 'exec 3<>/dev/tcp/jeremys-macbook-pro/22' 2>/dev/null"
       HostName jeremys-macbook-pro
 

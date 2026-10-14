@@ -10,7 +10,7 @@ in
     zramSwap = {
       enable = true;
       priority = 100;
-      algorithm = "lz4"; # one of many algorithms
+      algorithm = "zstd"; # better ratio than lz4 at similar speed
       memoryPercent = 50; # will compress upto 50% of available memory when needed (after ram is full)
     };
   };

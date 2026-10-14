@@ -37,12 +37,15 @@ in
     # Covers peripheral batteries, e.g. Logitech devices like the G305 as hidpp_battery_0.
     services.upower.enable = true;
 
-    # No after/wants on power-profiles-daemon: it ships After=multi-user.target,
-    # which cycles with wantedBy and makes systemd drop this job. powerprofilesctl
-    # activates it over D-Bus regardless.
+    # powerprofilesctl builds its valid values by querying the daemon, so it has
+    # to run after it. The daemon is dbus-activated and never starts at boot on
+    # its own, hence wants. Anchored to graphical.target because the daemon is
+    # After=multi-user.target, which would cycle.
     systemd.services.apply-power-profile = lib.mkIf (cfg.profile != null) {
       description = "Apply the configured power profile";
-      wantedBy = [ "multi-user.target" ];
+      wants = [ "power-profiles-daemon.service" ];
+      after = [ "power-profiles-daemon.service" ];
+      wantedBy = [ "graphical.target" ];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;

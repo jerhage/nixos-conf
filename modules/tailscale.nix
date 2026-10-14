@@ -39,10 +39,6 @@ in
         extraSetFlags = [ "--operator=${config.my.user}" ];
       };
 
-      # Measured alongside ProtonVPN: routing does not collide, since both use
-      # policy routing rather than replacing the default route. Note tailscaled
-      # answers MagicDNS even when offline, so resolution succeeding is not
-      # evidence a peer is reachable -- see the ssh Match block in the host.
     })
   ];
 }

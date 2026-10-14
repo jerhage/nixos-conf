@@ -14,12 +14,11 @@ in
     hardware.bluetooth = {
       enable = true;
       powerOnBoot = true;
-      package = pkgs.bluez;
       settings = {
         General = {
           Enable = "Source,Sink,Media,Socket";
           AutoEnable = true;
-          ControllerMode = "bredr";
+          ControllerMode = "dual";
           UserspaceHID = true;
           Experimental = true;
           FastConnectable = true;
@@ -33,14 +32,14 @@ in
       };
     };
 
-    environment.systemPackages = [ pkgs.bluez ];
-
     services.blueman.enable = true;
 
     # blueman's XDG autostart entry puts a tray icon next to noctalia's own
     # bluetooth widget. Masked, so blueman-manager stays usable for pairing.
     systemd.user.units."app-blueman@autostart.service".enable = false;
 
+    # Xbox One/Series pads will not pair over Bluetooth with Enhanced
+    # Retransmission Mode on. Needed only for those.
     boot.extraModprobeConfig = ''
       options bluetooth disable_ertm=1
     '';

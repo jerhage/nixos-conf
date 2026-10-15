@@ -6,6 +6,19 @@ in
   options.my.ssh = {
     agent.enable = lib.mkEnableOption "ssh agent for interactive sessions";
     server.enable = lib.mkEnableOption "OpenSSH server (key-only)";
+
+    server.interfaces = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ "tailscale0" ];
+      example = [
+        "eno1"
+        "tailscale0"
+      ];
+      description = ''
+        Interfaces that accept SSH. Port 22 is opened per interface rather than
+        globally, so a new bridge, VM or wifi link does not expose it by default.
+      '';
+    };
   };
 
   config = lib.mkMerge [
@@ -29,11 +42,15 @@ in
       services.openssh = {
         enable = true;
 
+        # Defaults to true, which opens port 22 on every interface.
+        openFirewall = false;
+
         settings = {
           PasswordAuthentication = false;
           KbdInteractiveAuthentication = false;
           PermitRootLogin = "no";
           PubkeyAuthentication = true;
+          AllowUsers = [ config.my.user ];
 
           # Optional hardening
           # AllowTcpForwarding = "no";
@@ -42,7 +59,9 @@ in
         };
       };
 
-      networking.firewall.allowedTCPPorts = [ 22 ];
+      networking.firewall.interfaces = lib.genAttrs cfg.server.interfaces (_: {
+        allowedTCPPorts = [ 22 ];
+      });
     })
   ];
 }

@@ -17,6 +17,10 @@
   my.virtualisation.enable = true;
   my.onepassword.enable = true;
   my.ssh.server.enable = true;
+  my.ssh.server.interfaces = [
+    "eno1"
+    "tailscale0"
+  ];
   my.devtools.enable = true;
   my.devtools.agentSandbox = true;
   my.devtools.languages = [

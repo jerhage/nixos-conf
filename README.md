@@ -89,6 +89,11 @@ with a plain assignment.
   `nono pull nolabs-ai/claude` installs. The `-dots` variants add the dotfiles
   repo minus `bash` and `nono`. Run one as
   `nono run --profile claude-dots --allow-cwd -- claude`.
+- `my.ssh.server.interfaces` lists the interfaces that accept SSH; port 22 is
+  opened per interface rather than globally, so bringing up wifi, a VM bridge or
+  a container veth does not expose sshd on it. Defaults to `[ "tailscale0" ]`,
+  so a new host is tailnet-only until it opts into more. Interface names are
+  host-specific (`ip -br link`), which is why the list lives on the host.
 - `my.dns.systemdResolved` is off by default and exists as a documented escape
   hatch: turn it on if DNS starts resolving intermittently, which usually means
   NetworkManager, Tailscale and a VPN are racing over `/etc/resolv.conf`.

@@ -51,11 +51,12 @@ in
           PermitRootLogin = "no";
           PubkeyAuthentication = true;
           AllowUsers = [ config.my.user ];
+          X11Forwarding = false;
+          AllowAgentForwarding = false;
 
-          # Optional hardening
-          # AllowTcpForwarding = "no";
-          # X11Forwarding = false;
-          # AllowAgentForwarding = false;
+          # A host serving localhost-bound non-HTTP services wants this on.
+          # likely home server for ssh-ing into something
+          AllowTcpForwarding = "no";
         };
       };
 

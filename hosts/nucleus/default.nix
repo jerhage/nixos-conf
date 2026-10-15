@@ -58,19 +58,11 @@
   # Bootloader
   boot.loader = {
     systemd-boot.enable = true;
+    # Bounds the boot menu. Older generations stay in /nix until collected.
+    systemd-boot.configurationLimit = 10;
   };
 
   hardware.enableAllFirmware = true;
-
-  networking = {
-    hosts = {
-      # "192.168.18.33" = [ "raspi.casa.local" ];
-      # "10.129.182.29" = [
-      # "blog.inlanefreight.local"
-      # "blog-dev.inlanefreight.local"
-      # ];
-    };
-  };
 
   time.timeZone = "America/Chicago";
 
@@ -135,6 +127,7 @@
       User jh
       IdentityFile ~/.ssh/id_ed25519_nix
       IdentitiesOnly yes
+      HostKeyAlias mbp
   '';
 
   users.users.${config.my.user} = {
@@ -156,7 +149,6 @@
   environment.systemPackages = with pkgs; [
     # cli / system
     ffmpeg
-    nh
     stow
     usbutils # lsusb, usb-devices
     wev # wayland event viewer

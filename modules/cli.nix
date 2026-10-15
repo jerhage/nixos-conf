@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  inputs,
   pkgs,
   ...
 }:
@@ -27,6 +28,8 @@ in
       git
       jq
       lsof
+      # Mason's prebuilt is a generic Linux .NET binary and cannot find libicu.
+      marksman
       neovim
       p7zip # 7z, reads rar
       pv
@@ -39,6 +42,16 @@ in
       zip
       zstd
     ];
+
+    programs.nix-index-database = {
+      enable = true;
+      comma.enable = true;
+    };
+
+    # The default index is 102 MB and covers every file. The small one indexes
+    # only bin/, which is all comma and command-not-found look at.
+    programs.nix-index.package =
+      inputs.nix-index-database.packages.${pkgs.stdenv.hostPlatform.system}.nix-index-with-small-db;
 
     # .bashrc only covers interactive shells; this reaches GUI apps and units.
     environment.variables = {

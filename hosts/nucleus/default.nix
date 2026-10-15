@@ -108,6 +108,7 @@
       ".config/yazi" = "yazi/.config/yazi";
     };
   };
+  my.vm.shareDotfiles = false;
 
   my.sync.pulls.calibre = {
     from = "mbp:~/calibre/";

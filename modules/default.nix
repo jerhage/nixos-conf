@@ -6,6 +6,7 @@
     ./git.nix
     ./kernel.nix
     ./profiles.nix
+    ./vm.nix
 
     # opt-in features
     ./audio.nix

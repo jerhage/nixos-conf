@@ -35,15 +35,40 @@
             inputs.noctalia-greeter.nixosModules.default
           ];
         };
+
+      # Systems the flake is usable from, not just the ones hosts run on, so
+      # `nix fmt` and `nix run` work from the mac too.
+      forAllSystems = lib.genAttrs [
+        "x86_64-linux"
+        "aarch64-linux"
+        "aarch64-darwin"
+      ];
+
+      forLinux = lib.genAttrs [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
     in
     {
       nixosConfigurations = lib.genAttrs hostNames mkHost;
 
-      # `nix fmt` formats every .nix file in the repo. Covers the systems the
-      # hosts run on, so a new host on different hardware needs no edit here.
-      formatter = lib.genAttrs (lib.unique (
-        lib.mapAttrsToList (_: host: host.config.nixpkgs.hostPlatform.system) self.nixosConfigurations
-      )) (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
+      # Importable by another flake: inputs.nixos-conf.nixosModules.default
+      nixosModules.default = ./modules;
+
+      # Linux only: both wrap niri or ghostty.
+      packages = forLinux (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        {
+          niri-keys = pkgs.callPackage ./pkgs/niri-keys { };
+          nvim-desktop-item = pkgs.callPackage ./pkgs/nvim-desktop-item { };
+        }
+      );
+
+      # `nix fmt` formats every .nix file in the repo.
+      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
 
       # Project scaffolding: `nix flake init -t ~/nixos-conf#devshell`
       templates = {

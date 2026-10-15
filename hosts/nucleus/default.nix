@@ -22,6 +22,7 @@
     "tailscale0"
   ];
   my.devtools.enable = true;
+  my.secrets.enable = true;
   my.devtools.agentSandbox = true;
   my.devtools.languages = [
     "c"

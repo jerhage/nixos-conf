@@ -43,6 +43,9 @@ in
       zstd
     ];
 
+    # Which package provides a command, without running it.
+    environment.shellAliases.whichpkg = ", -p";
+
     programs.nix-index-database = {
       enable = true;
       comma.enable = true;

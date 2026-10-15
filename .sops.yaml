@@ -1,0 +1,21 @@
+# Who can decrypt what. Public keys only -- safe to commit.
+#
+# Regenerate the host key line after reinstalling a host:
+#   ssh-to-age < /etc/ssh/ssh_host_ed25519_key.pub
+# Your own key, generated once and never committed:
+#   age-keygen -o ~/.config/sops/age/keys.txt
+#   age-keygen -y ~/.config/sops/age/keys.txt
+#
+# After editing this file, re-encrypt existing secrets for the new recipients:
+#   sops updatekeys secrets/secrets.yaml
+
+keys:
+  - &jh age1axrde7w6zzy4v6eec3aazxx4hrmadrvcfqgrcpstjsd6kz05853qhey8js
+  - &nucleus age1n3q3rjpk07l47evu0sva7g7kedu68k04dz9e3pu4nerva2lpqgkq9evqyy
+
+creation_rules:
+  - path_regex: secrets/secrets\.yaml$
+    key_groups:
+      - age:
+          - *jh
+          - *nucleus

@@ -10,6 +10,8 @@
     # reaches the stable nixpkgs branch; the module is unstable-only for now.
     noctalia-greeter.url = "github:noctalia-dev/noctalia-greeter";
     noctalia-greeter.inputs.nixpkgs.follows = "nixpkgs";
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     nix-index-database.url = "github:nix-community/nix-index-database";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
@@ -36,6 +38,7 @@
             { networking.hostName = name; }
             inputs.noctalia-greeter.nixosModules.default
             inputs.nix-index-database.nixosModules.nix-index
+            inputs.sops-nix.nixosModules.sops
           ];
         };
 

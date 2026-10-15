@@ -6,6 +6,7 @@
     ./git.nix
     ./kernel.nix
     ./profiles.nix
+    ./secrets.nix
     ./vm.nix
 
     # opt-in features

@@ -13,8 +13,6 @@ in
   config = lib.mkIf cfg.enable {
     # enable containerization ( podman )
     environment.systemPackages = with pkgs; [
-      docker
-      docker-compose
       podman
       podman-compose
       podman-desktop

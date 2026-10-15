@@ -8,6 +8,8 @@ let
   cfg = config.my.niri;
 in
 {
+  # Compositor only; the shell inside it is my.noctalia. programs.niri has no
+  # config option -- ~/.config/niri is symlinked by my.dotfiles.links.
   options.my.niri.enable = lib.mkEnableOption "niri Wayland session";
 
   config = lib.mkIf cfg.enable {
@@ -25,8 +27,4 @@ in
       GDK_BACKEND = "wayland";
     };
   };
-
-  # Compositor and session only; the shell running inside it is my.noctalia, so
-  # the two can be swapped independently. programs.niri has no config option --
-  # ~/.config/niri is symlinked to the dotfiles repo by my.dotfiles.links.
 }

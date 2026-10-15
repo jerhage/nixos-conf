@@ -136,7 +136,6 @@
     extraGroups = [
       "networkmanager"
       "wireshark"
-      "docker"
     ];
 
     packages = with pkgs; [
@@ -157,7 +156,6 @@
     wev # wayland event viewer
 
     # dev
-    lazydocker
     lazygit
     tree-sitter
 

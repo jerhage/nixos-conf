@@ -80,6 +80,15 @@ with a plain assignment.
   complete set for each -- `rust` means rustc and rust-analyzer, not just cargo.
   Typed as an enum, so an unknown name fails at eval. Current sets: bun, c,
   deno, elixir, go, nix, node, python, rust.
+- `my.devtools.agentSandbox` installs nono, a Landlock sandbox for AI agent
+  harnesses. The option installs the tool only. Profiles are not managed by Nix:
+  they live in `~/dotfiles/nono` and the whole `profiles` directory is linked by
+  `my.dotfiles.links`, so adding one is just a new file there. Two lines of them
+  -- `agent` and `agent-dots` extend nono's own `default` and suit any harness,
+  while `claude-base` and `claude-dots` extend the Claude Code profile that
+  `nono pull nolabs-ai/claude` installs. The `-dots` variants add the dotfiles
+  repo minus `bash` and `nono`. Run one as
+  `nono run --profile claude-dots --allow-cwd -- claude`.
 - `my.dns.systemdResolved` is off by default and exists as a documented escape
   hatch: turn it on if DNS starts resolving intermittently, which usually means
   NetworkManager, Tailscale and a VPN are racing over `/etc/resolv.conf`.

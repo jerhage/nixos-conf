@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 let
@@ -66,11 +67,22 @@ in
         rustc and rust-analyzer, not just cargo -- cargo alone cannot compile.
       '';
     };
+
+    agentSandbox = lib.mkEnableOption ''
+      nono, a Landlock sandbox for AI agent harnesses. Installs the tool only;
+      profiles live in ~/.config/nono/profiles and are not managed here
+    '';
   };
 
   config = lib.mkMerge [
     (lib.mkIf (cfg.languages != [ ]) {
       environment.systemPackages = lib.concatMap (l: languageSets.${l}) cfg.languages;
+    })
+
+    (lib.mkIf cfg.agentSandbox {
+      environment.systemPackages = [
+        inputs.nono.packages.${pkgs.stdenv.hostPlatform.system}.prebuilt
+      ];
     })
 
     (lib.mkIf cfg.enable {

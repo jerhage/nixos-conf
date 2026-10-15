@@ -37,6 +37,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-darwin-legacy": {
+      "locked": {
+        "lastModified": 1788334797,
+        "narHash": "sha256-nskSa8kDimM7F0VFSP8IdoSNo4G0vKzOtxwvOFpoGDI=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "c19db427a1fdfc7591c0b0baeb4665dcef2c61da",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-26.05-darwin",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "noctalia-greeter": {
       "inputs": {
         "nixpkgs": [
@@ -57,10 +73,32 @@
         "type": "github"
       }
     },
+    "nono": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "nixpkgs-darwin-legacy": "nixpkgs-darwin-legacy"
+      },
+      "locked": {
+        "lastModified": 1792064507,
+        "narHash": "sha256-Uh0l+RdlWBZzhJHpDxsZNZVcx4GCyZB3GRtzCVG6d30=",
+        "owner": "always-further",
+        "repo": "nono",
+        "rev": "45fcc24175c8aa000e427f25bb9ba7522a99991a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "always-further",
+        "repo": "nono",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "nixpkgs": "nixpkgs",
         "noctalia-greeter": "noctalia-greeter",
+        "nono": "nono",
         "zen-browser": "zen-browser"
       }
     },

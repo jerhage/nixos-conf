@@ -18,6 +18,7 @@
   my.onepassword.enable = true;
   my.ssh.server.enable = true;
   my.devtools.enable = true;
+  my.devtools.agentSandbox = true;
   my.devtools.languages = [
     "c"
     "deno"
@@ -102,6 +103,7 @@
       ".config/fcitx5/conf/hangul.conf" = "fcitx5/.config/fcitx5/conf/hangul.conf";
       ".config/fcitx5/conf/keyboard.conf" = "fcitx5/.config/fcitx5/conf/keyboard.conf";
       ".config/fcitx5/conf/notifications.conf" = "fcitx5/.config/fcitx5/conf/notifications.conf";
+      ".config/nono/profiles" = "nono/.config/nono/profiles";
       ".config/nvim" = "nvim/.config/nvim";
       ".config/starship" = "starship/.config/starship";
       ".config/starship.toml" = "starship/.config/starship.toml";

@@ -3,6 +3,9 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    # Landlock sandbox for AI agents. nixpkgs lags well behind on this one.
+    nono.url = "github:always-further/nono";
+    nono.inputs.nixpkgs.follows = "nixpkgs";
     # TODO: drop this input once services.displayManager.noctalia-greeter
     # reaches the stable nixpkgs branch; the module is unstable-only for now.
     noctalia-greeter.url = "github:noctalia-dev/noctalia-greeter";

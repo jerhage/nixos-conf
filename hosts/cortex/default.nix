@@ -38,12 +38,12 @@
   # cortex owns the library now: one writer, so no divergent sqlite copies.
   my.sync.pulls.calibre = {
     from = "mbp:~/calibre/";
-    to = "~/calibre/";
+    to = "/var/lib/calibre/";
   };
 
   # Encrypted copy in Dropbox using rclone crypt
   my.sync.cloud.calibre-cloud = {
-    local = "/home/jh/calibre/";
+    local = "/var/lib/calibre/";
     remote = "crypt:calibre/";
     extraFlags = [
       "--exclude"
@@ -64,6 +64,7 @@
     listen.ip = "127.0.0.1";
     listen.port = 8083;
     options = {
+      calibreLibrary = "/var/lib/calibre";
       enableBookUploading = true;
       enableBookConversion = true;
     };
@@ -71,9 +72,16 @@
 
   # The nixos module already hardens this well; these are what it leaves out.
   # Not setting IPAddressDeny: calibre-web fetches metadata from the internet.
+  # jh runs desktop calibre over ssh -X against the same library.
+  users.users.jh.extraGroups = [ "calibre-web" ];
+
+  # setgid so anything either of them creates stays group-writable.
+  systemd.tmpfiles.rules = [ "d /var/lib/calibre 2770 jh calibre-web -" ];
+
   systemd.services.calibre-web.serviceConfig = {
     PrivateUsers = true;
-    UMask = "0077";
+    # 0007 not 0077: jh must read what calibre-web writes.
+    UMask = "0007";
   };
 
   boot.loader.systemd-boot.enable = true;

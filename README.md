@@ -34,7 +34,7 @@ pin that whole system closure until removed. `rm -f result` when done, or use
 6. `sudo nixos-rebuild switch --flake ~/nixos-conf#<hostname>`
    (the `#<hostname>` is only needed this first time, before the hostname is set)
 
-The host directory name *is* the hostname; `flake.nix` contains no hostnames.
+The host directory name _is_ the hostname; `flake.nix` contains no hostnames.
 
 ### Steps the config cannot do for you
 
@@ -52,15 +52,15 @@ because a reinstall dropped it silently and nothing pointed at the cause.
 
 ## Layout
 
-| Path | Purpose |
-| --- | --- |
-| `flake.nix` | Discovers hosts via `readDir ./hosts`. Never edited to add a host. |
-| `modules/` | Shared NixOS modules, each behind a `my.<name>.enable` option. |
-| `modules/default.nix` | Imports every module. Every host gets all of them; they do nothing unless enabled. |
-| `modules/profiles.nix` | Bundles modules for a kind of machine (`base`, `workstation`). |
-| `hosts/<name>/` | Per-machine config and its `hardware-configuration.nix`. |
-| `pkgs/<name>/` | Packages defined here rather than in nixpkgs, pulled in with `callPackage`. |
-| `templates/host/` | Starting point for a new host. |
+| Path                   | Purpose                                                                            |
+| ---------------------- | ---------------------------------------------------------------------------------- |
+| `flake.nix`            | Discovers hosts via `readDir ./hosts`. Never edited to add a host.                 |
+| `modules/`             | Shared NixOS modules, each behind a `my.<name>.enable` option.                     |
+| `modules/default.nix`  | Imports every module. Every host gets all of them; they do nothing unless enabled. |
+| `modules/profiles.nix` | Bundles modules for a kind of machine (`base`, `workstation`).                     |
+| `hosts/<name>/`        | Per-machine config and its `hardware-configuration.nix`.                           |
+| `pkgs/<name>/`         | Packages defined here rather than in nixpkgs, pulled in with `callPackage`.        |
+| `templates/host/`      | Starting point for a new host.                                                     |
 
 Always on regardless of profile: `nix.nix`, `user.nix`, `git.nix`, `kernel.nix`,
 `profiles.nix`.
@@ -133,6 +133,60 @@ with a plain assignment.
 - `nix fmt` formats every `.nix` file in the repo via `nixfmt-tree`. Run it
   after changes. Passing a directory to `nixfmt` directly is deprecated, so
   format single files as `nixfmt <file>` or use `nix fmt` for the tree.
+
+## Backups
+
+`my.backup` runs restic daily to `rclone:dropbox:restic`, keeping 7 daily, 4
+weekly and 12 monthly snapshots. The repo is not inside the `crypt:` remote:
+restic already encrypts contents, filenames and structure.
+
+Snapshots are cheap because files are split into content-hashed chunks and
+stored once. A snapshot is a tree of references, so an unchanged 20 GB costs
+kilobytes. restic also skips _reading_ files whose size and mtime match the
+previous snapshot -- change the path list and that parent match is lost, so the
+next run re-reads everything even though it uploads almost nothing.
+
+The `restic-local` wrapper carries the repository, password file and rclone
+config, so none of that needs typing.
+
+```sh
+restic-local snapshots                    # list; note an ID
+restic-local ls latest /var/lib/calibre   # browse a snapshot
+restic-local diff <id1> <id2>             # what changed between two
+```
+
+Restoring:
+
+```sh
+# one file, to stdout
+restic-local dump latest /var/lib/calibre/metadata.db > ./recovered.db
+
+# a subtree, somewhere safe to inspect first
+restic-local restore latest --target /tmp/check --include /var/lib/calibre
+
+# everything, in place, after losing a disk
+restic-local restore latest --target /
+```
+
+To hunt for something without knowing which snapshot has it, mount them all:
+
+```sh
+sudo mkdir -p /mnt/snaps
+sudo restic-local mount /mnt/snaps     # /mnt/snaps/snapshots/<date>/...
+```
+
+Two things worth noting cause it messed me up:
+
+- **A `DynamicUser` service keeps state in `/var/lib/private/<name>` and
+  symlinks `/var/lib/<name>` to it.** restic does not follow symlinks. The
+  module resolves paths with `readlink -f` at backup time, so the path
+  works, but a snapshot will look complete while actually not having anything.
+- **Verify with a restore, never a file count.** The first snapshot here exited
+  cleanly, reported 20.8 GiB and listed every path, while containing none of
+  the anki data.
+
+The repo password lives in sops and in 1Password. Best not lost both it and the age keys
+else every snapshot is permanently unreadable.
 
 ## Per-project dev environments
 

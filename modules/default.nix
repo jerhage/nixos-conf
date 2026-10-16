@@ -31,6 +31,8 @@
     ./shell.nix
     ./sync.nix
     ./sync-cloud.nix
+    ./server.nix
+    ./anki-sync.nix
     ./tailscale.nix
     ./ssh.nix
     ./theming.nix

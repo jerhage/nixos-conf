@@ -116,12 +116,12 @@
     to = "~/Pictures/";
   };
 
-  my.sync.cloud = {
-    tmw = {
-      local = "~/tmw/";
-      remote = "crypt:tmw/";
-    };
-  };
+  # my.sync.cloud = {
+  #   tmw = {
+  #     local = "~/tmw/";
+  #     remote = "crypt:tmw/";
+  #   };
+  # };
 
   # Host aliases live here rather than ~/.ssh/config so they stay per-host Nix
   # config. modules/ssh.nix adds a "Host *" block above this one.

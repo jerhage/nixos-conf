@@ -78,12 +78,14 @@
   users.users.jh.extraGroups = [ "calibre-web" ];
 
   # setgid so anything either of them creates stays group-writable.
-  # d creates the directory; Z recursively fixes ownership of what is already
-  # there, so a restored library needs no chown by hand. The `-` mode on Z
-  # leaves file permissions alone -- 2770 on a book would mark it executable.
+  # The library arrives from rclone as 0644/0755, so the group can read it but
+  # calibre-web cannot write metadata.db. An ACL rather than a mode: capital X
+  # grants traversal on directories without marking every book executable, and
+  # the d: entry makes new files inherit it.
   systemd.tmpfiles.rules = [
     "d /var/lib/calibre 2770 jh calibre-web -"
     "Z /var/lib/calibre - jh calibre-web -"
+    "A+ /var/lib/calibre - - - - g:calibre-web:rwX,d:g:calibre-web:rwX"
   ];
 
   systemd.services.calibre-web.serviceConfig = {

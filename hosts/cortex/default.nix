@@ -61,12 +61,7 @@
   # No app-side prefix config: it serves an API and generates no links.
   my.ankiSync.enable = true;
 
-  # get_download_link builds the download filename twice: a plain one and a
-  # percent-encoded filename* field. Both come from the romanised name, so the
-  # field that exists to carry the original never does. Patch it to encode the
-  # original; the plain field stays romanised because header values must be
-  # ASCII, and tornado rejects the whole response otherwise.
-  # replace-fail so a version bump that moves these lines breaks the build.
+  # Upstream builds filename* from the romanised name, so downloads lose Korean.
   services.calibre-web.package = pkgs.calibre-web.overrideAttrs (old: {
     postPatch = (old.postPatch or "") + ''
       substituteInPlace src/calibreweb/cps/helper.py \
@@ -108,6 +103,9 @@
     PrivateUsers = true;
     # 0007 not 0077: jh must read what calibre-web writes.
     UMask = "0007";
+
+    # The module denies @resources, so calibre's converters die on setpriority.
+    SystemCallFilter = [ "setpriority" ];
   };
 
   boot.loader.systemd-boot.enable = true;

@@ -13,7 +13,18 @@
 
   my.tailscale.enable = true;
 
-  # Tailnet only. The LAN interface is deliberately absent.
+
+  # eno1 keeps ssh reachable on the LAN; without it a switch before tailscale
+  # is up locks you out.
+  my.ssh.server.interfaces = [
+    "eno1"
+    "tailscale0"
+  ];
+
+  users.users.jh.openssh.authorizedKeys.keys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDgYJvoB7Z9QOIud/s1Zgho8Ssmp33uzXx8TX5DdCCQy nixos-desktop"
+  ];
+
   my.ssh.server.enable = true;
 
   # Bulk metadata editing means running desktop calibre here over ssh -X.

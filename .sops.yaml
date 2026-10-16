@@ -12,6 +12,7 @@
 keys:
   - &jh age1axrde7w6zzy4v6eec3aazxx4hrmadrvcfqgrcpstjsd6kz05853qhey8js
   - &nucleus age1n3q3rjpk07l47evu0sva7g7kedu68k04dz9e3pu4nerva2lpqgkq9evqyy
+  - &cortex age1njyp6vejfa8f7u2yl4rm860pz55fxvn5gd5h8re6m8s4zcs4jptq4vccsh
 
 creation_rules:
   - path_regex: secrets/secrets\.yaml$
@@ -19,3 +20,4 @@ creation_rules:
       - age:
           - *jh
           - *nucleus
+          - *cortex

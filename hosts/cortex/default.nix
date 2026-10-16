@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   imports = [ ./hardware-configuration.nix ];
 
@@ -15,6 +15,10 @@
 
   # Tailnet only. The LAN interface is deliberately absent.
   my.ssh.server.enable = true;
+
+  # Bulk metadata editing means running desktop calibre here over ssh -X.
+  services.openssh.settings.X11Forwarding = true;
+  environment.systemPackages = [ pkgs.calibre ];
 
   my.secrets.enable = false;
 
@@ -37,6 +41,13 @@
       enableBookUploading = true;
       enableBookConversion = true;
     };
+  };
+
+  # The nixos module already hardens this well; these are what it leaves out.
+  # Not setting IPAddressDeny: calibre-web fetches metadata from the internet.
+  systemd.services.calibre-web.serviceConfig = {
+    PrivateUsers = true;
+    UMask = "0077";
   };
 
   boot.loader.systemd-boot.enable = true;

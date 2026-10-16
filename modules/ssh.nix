@@ -51,12 +51,12 @@ in
           PermitRootLogin = "no";
           PubkeyAuthentication = true;
           AllowUsers = [ config.my.user ];
-          X11Forwarding = false;
-          AllowAgentForwarding = false;
+          X11Forwarding = lib.mkDefault false;
+          AllowAgentForwarding = lib.mkDefault false;
 
           # A host serving localhost-bound non-HTTP services wants this on.
           # likely home server for ssh-ing into something
-          AllowTcpForwarding = "no";
+          AllowTcpForwarding = lib.mkDefault "no";
         };
       };
 

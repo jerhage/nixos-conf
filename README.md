@@ -114,10 +114,21 @@ with a plain assignment.
 - `my.dns.systemdResolved` is off by default and exists as a documented escape
   hatch: turn it on if DNS starts resolving intermittently, which usually means
   NetworkManager, Tailscale and a VPN are racing over `/etc/resolv.conf`.
+- `my.sync.cloud.<name>` syncs against an rclone remote. `push-<name>` mirrors
+  and deletes; `pull-<name>` only merges, because a restore should never remove
+  local files.
+- `my.server.sites.<name>` publishes a service through Caddy. `routing = "path"`
+  serves everything on one origin behind a single `tailscale serve`, and sets
+  the prefix headers apps need; `routing = "host"` switches to subdomains later
+  without touching the service definitions.
+- `my.secrets.enable` turns on sops-nix. A host decrypts with an age key derived
+  from its ssh host key, so reinstalling one means re-running `ssh-to-age`, adding
+  it to `.sops.yaml` and `sops updatekeys`. Hosts only decrypt the secrets they
+  declare.
 - `my.sync.pulls.<name>` declares an rsync pull from another host and generates
-  four aliases from it: `pull-<name>`, `-dry`, `-merge` and `-merge-dry`. The
-  flags live in `my.sync.flags` so the mirror-vs-merge distinction is defined
-  once rather than per alias.
+  `pull-<name>` and `-dry`, which merge. `mirror = true` adds the deleting
+  variants: deletion is opt-in per entry rather than something to remember.
+  Shared flags live in `my.sync.flags`.
 - `nix fmt` formats every `.nix` file in the repo via `nixfmt-tree`. Run it
   after changes. Passing a directory to `nixfmt` directly is deprecated, so
   format single files as `nixfmt <file>` or use `nix fmt` for the tree.

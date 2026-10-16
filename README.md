@@ -76,6 +76,10 @@ with a plain assignment.
 - `my.cli.enable` is the baseline command-line set, on for every host via the
   `base` profile. The test for inclusion is whether a headless machine would
   want it; desktop-only tools belong in the host list.
+- `my.i18n.languages` adds a locale per language, and the matching fcitx5 engine
+  only when `my.i18n.inputMethod.enable` is also on. `base` sets locales, which
+  any host needs to handle CJK filenames; `workstation` adds the input method,
+  which needs a graphical session.
 - `my.devtools.languages` takes a list of toolchain names and installs a
   complete set for each -- `rust` means rustc and rust-analyzer, not just cargo.
   Typed as an enum, so an unknown name fails at eval. Current sets: bun, c,

@@ -13,7 +13,6 @@
 
   my.tailscale.enable = true;
 
-
   # eno1 keeps ssh reachable on the LAN; without it a switch before tailscale
   # is up locks you out.
   my.ssh.server.interfaces = [
@@ -35,6 +34,22 @@
 
   # Until the dotfiles repo is provisioned here, the links would dangle.
   my.dotfiles.enable = false;
+
+  # cortex owns the library now: one writer, so no divergent sqlite copies.
+  my.sync.pulls.calibre = {
+    from = "mbp:~/calibre/";
+    to = "~/calibre/";
+  };
+
+  # Encrypted copy in Dropbox using rclone crypt
+  my.sync.cloud.calibre-cloud = {
+    local = "/home/jh/calibre/";
+    remote = "crypt:calibre/";
+    extraFlags = [
+      "--exclude"
+      ".DS_Store"
+    ];
+  };
 
   my.server.enable = true;
   my.server.sites.books.port = 8083;

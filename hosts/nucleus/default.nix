@@ -111,21 +111,6 @@
   };
   my.vm.shareDotfiles = false;
 
-  my.sync.pulls.calibre = {
-    from = "mbp:~/calibre/";
-    to = "~/calibre/";
-  };
-
-  # Encrypted copy in Dropbox using rclone crypt
-  my.sync.cloud.calibre-cloud = {
-    local = "/home/jh/calibre/";
-    remote = "crypt:calibre/";
-    extraFlags = [
-      "--exclude"
-      ".DS_Store"
-    ];
-  };
-
   # Host aliases live here rather than ~/.ssh/config so they stay per-host Nix
   # config. modules/ssh.nix adds a "Host *" block above this one.
   programs.ssh.extraConfig = ''
@@ -140,6 +125,13 @@
       IdentityFile ~/.ssh/id_ed25519_nix
       IdentitiesOnly yes
       HostKeyAlias mbp
+
+    Host cortex
+      HostName 10.10.1.5
+      User jh
+      IdentityFile ~/.ssh/id_ed25519_nix
+      IdentitiesOnly yes
+      HostKeyAlias cortex
   '';
 
   users.users.${config.my.user} = {

@@ -61,16 +61,19 @@
   # No app-side prefix config: it serves an API and generates no links.
   my.ankiSync.enable = true;
 
-  # get_download_link passes force_unidecode=True, which bypasses the
-  # "convert non-English characters" setting and romanises every download.
-  # It then sends the result as filename*=UTF-8'' anyway, which is the header
-  # built to carry the original. replace-fail so a version bump that moves this
-  # line breaks the build rather than silently reverting.
+  # get_download_link builds the download filename twice: a plain one and a
+  # percent-encoded filename* field. Both come from the romanised name, so the
+  # field that exists to carry the original never does. Patch it to encode the
+  # original; the plain field stays romanised because header values must be
+  # ASCII, and tornado rejects the whole response otherwise.
+  # replace-fail so a version bump that moves these lines breaks the build.
   services.calibre-web.package = pkgs.calibre-web.overrideAttrs (old: {
     postPatch = (old.postPatch or "") + ''
       substituteInPlace src/calibreweb/cps/helper.py \
-        --replace-fail 'replace_whitespace=False, force_unidecode=True' \
-                       'replace_whitespace=False, force_unidecode=False'
+        --replace-fail 'file_name = get_valid_filename(file_name, replace_whitespace=False, force_unidecode=True)' \
+                       'orig_name = get_valid_filename(file_name, replace_whitespace=False)' \
+        --replace-fail 'quoted_file_name = file_name if client == "kindle" else quote(file_name)' \
+                       'file_name = get_valid_filename(file_name, replace_whitespace=False, force_unidecode=True); quoted_file_name = file_name if client == "kindle" else quote(orig_name)'
     '';
   });
 

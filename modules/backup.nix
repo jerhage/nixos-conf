@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -27,6 +28,10 @@ in
       description = ''
         Directories to snapshot. Worth including service state, not just the
         obvious data: it exists nowhere else once the disk is gone.
+
+        Symlinks are resolved at backup time, so the obvious path works even
+        for a `DynamicUser` service whose state really lives in
+        /var/lib/private. Verify with a restore, not a file count.
       '';
     };
 
@@ -45,7 +50,16 @@ in
     sops.secrets.restic-password.mode = "0400";
 
     services.restic.backups.local = {
-      inherit (cfg) repository paths;
+      inherit (cfg) repository;
+
+      # Resolved at backup time, not written out by hand: a DynamicUser service
+      # keeps its state in /var/lib/private/<name> and symlinks /var/lib/<name>
+      # to it, and restic would otherwise snapshot the link and no data.
+      dynamicFilesFrom = ''
+        for p in ${lib.escapeShellArgs cfg.paths}; do
+          ${pkgs.coreutils}/bin/readlink -f "$p"
+        done
+      '';
       initialize = true;
 
       passwordFile = "/run/secrets/restic-password";

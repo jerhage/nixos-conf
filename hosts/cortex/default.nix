@@ -61,6 +61,19 @@
   # No app-side prefix config: it serves an API and generates no links.
   my.ankiSync.enable = true;
 
+  # get_download_link passes force_unidecode=True, which bypasses the
+  # "convert non-English characters" setting and romanises every download.
+  # It then sends the result as filename*=UTF-8'' anyway, which is the header
+  # built to carry the original. replace-fail so a version bump that moves this
+  # line breaks the build rather than silently reverting.
+  services.calibre-web.package = pkgs.calibre-web.overrideAttrs (old: {
+    postPatch = (old.postPatch or "") + ''
+      substituteInPlace src/calibreweb/cps/helper.py \
+        --replace-fail 'replace_whitespace=False, force_unidecode=True' \
+                       'replace_whitespace=False, force_unidecode=False'
+    '';
+  });
+
   services.calibre-web = {
     enable = true;
     listen.ip = "127.0.0.1";

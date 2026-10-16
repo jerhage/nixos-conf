@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -79,6 +80,16 @@ in
       '';
     };
 
+    tailscaleServe = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Publish Caddy at `https://<host>.<tailnet>.ts.net/`. Otherwise this is
+        a one-off command living in tailscale's state, which a reinstall drops
+        silently and no error points at.
+      '';
+    };
+
     sites = lib.mkOption {
       default = { };
       description = "Services to publish, each proxied from a localhost port.";
@@ -125,6 +136,24 @@ in
         message = "my.server.routing = \"host\" needs my.server.domain.";
       }
     ];
+
+    # Fails until `tailscale up` has run on a fresh host, hence the retry.
+    systemd.services.tailscale-serve = lib.mkIf cfg.tailscaleServe {
+      description = "Publish Caddy through tailscale serve";
+      after = [
+        "tailscaled.service"
+        "caddy.service"
+      ];
+      wants = [ "tailscaled.service" ];
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        Restart = "on-failure";
+        RestartSec = "30s";
+        ExecStart = "${lib.getExe pkgs.tailscale} serve --bg --https=443 http://localhost:${toString cfg.listenPort}";
+      };
+    };
 
     services.caddy = {
       enable = true;

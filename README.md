@@ -38,16 +38,17 @@ The host directory name *is* the hostname; `flake.nix` contains no hostnames.
 
 ### Steps the config cannot do for you
 
-A rebuilt host needs three things by hand. None of them are in the flake, and
-nothing warns you when they are missing.
+A rebuilt host needs two things by hand. Neither is in the flake.
 
-- `sudo tailscale up` — joins the tailnet. Identity lives in `/var/lib/tailscale`.
-- `sudo tailscale serve --bg --https=443 http://localhost:80` — publishes the
-  Caddy vhosts at `https://<host>.<tailnet>.ts.net/`. Stored in tailscale's own
-  state, so a reinstall silently drops it and services become unreachable with
-  no error. Needed once per host running `my.server`.
+- `sudo tailscale up` — joins the tailnet. Identity lives in
+  `/var/lib/tailscale`. Until this runs, `tailscale-serve.service` retries and
+  fails, so services are unreachable even though everything else is up.
 - Restoring data: service state and anything under `/var/lib` that is not
   generated. The config fixes ownership on it, but cannot supply the bytes.
+  `restic-local restore latest --target /` on a host with `my.backup`.
+
+`tailscale serve` used to be a third. `my.server.tailscaleServe` now does it,
+because a reinstall dropped it silently and nothing pointed at the cause.
 
 ## Layout
 

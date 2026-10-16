@@ -53,6 +53,7 @@
   ];
 
   my.server.enable = true;
+  my.server.tailscaleServe = true;
   my.server.sites.books.port = 8083;
   my.server.sites.anki.port = 8080;
 

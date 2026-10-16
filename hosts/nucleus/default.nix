@@ -116,6 +116,13 @@
     to = "~/Pictures/";
   };
 
+  my.sync.cloud = {
+    tmw = {
+      local = "~/tmw/";
+      remote = "crypt:tmw/";
+    };
+  };
+
   # Host aliases live here rather than ~/.ssh/config so they stay per-host Nix
   # config. modules/ssh.nix adds a "Host *" block above this one.
   programs.ssh.extraConfig = ''
@@ -175,7 +182,7 @@
 
     # desktop applications
     anki
-    calibre
+    # calibre # using calibre-web via @cortex now
     cryptomator
     discord
     dropbox

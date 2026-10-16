@@ -29,6 +29,7 @@ let
     name: s:
     if cfg.routing == "path" then
       ''
+        redir /${name} /${name}/ 301
         handle_path /${name}/* {
           ${proxyBlock name s}
           ${s.extraConfig}

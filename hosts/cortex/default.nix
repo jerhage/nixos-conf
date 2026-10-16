@@ -70,7 +70,13 @@
   users.users.jh.extraGroups = [ "calibre-web" ];
 
   # setgid so anything either of them creates stays group-writable.
-  systemd.tmpfiles.rules = [ "d /var/lib/calibre 2770 jh calibre-web -" ];
+  # d creates the directory; Z recursively fixes ownership of what is already
+  # there, so a restored library needs no chown by hand. The `-` mode on Z
+  # leaves file permissions alone -- 2770 on a book would mark it executable.
+  systemd.tmpfiles.rules = [
+    "d /var/lib/calibre 2770 jh calibre-web -"
+    "Z /var/lib/calibre - jh calibre-web -"
+  ];
 
   systemd.services.calibre-web.serviceConfig = {
     PrivateUsers = true;

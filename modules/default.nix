@@ -33,6 +33,7 @@
     ./sync-cloud.nix
     ./server.nix
     ./anki-sync.nix
+    ./backup.nix
     ./tailscale.nix
     ./ssh.nix
     ./theming.nix

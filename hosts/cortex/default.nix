@@ -45,6 +45,13 @@
     ];
   };
 
+  my.backup.enable = true;
+  my.backup.paths = [
+    "/var/lib/calibre"
+    "/var/lib/calibre-web" # users, shelves, reading state
+    "/var/lib/anki-sync-server" # collections exist nowhere else
+  ];
+
   my.server.enable = true;
   my.server.sites.books.port = 8083;
   my.server.sites.anki.port = 8080;

@@ -30,6 +30,7 @@
     ./power.nix
     ./shell.nix
     ./sync.nix
+    ./sync-cloud.nix
     ./tailscale.nix
     ./ssh.nix
     ./theming.nix

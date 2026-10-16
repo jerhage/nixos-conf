@@ -116,6 +116,16 @@
     to = "~/calibre/";
   };
 
+  # Encrypted copy in Dropbox using rclone crypt
+  my.sync.cloud.calibre-cloud = {
+    local = "/home/jh/calibre/";
+    remote = "crypt:calibre/";
+    extraFlags = [
+      "--exclude"
+      ".DS_Store"
+    ];
+  };
+
   # Host aliases live here rather than ~/.ssh/config so they stay per-host Nix
   # config. modules/ssh.nix adds a "Host *" block above this one.
   programs.ssh.extraConfig = ''
@@ -151,7 +161,7 @@
   environment.systemPackages = with pkgs; [
     # cli / system
     ffmpeg
-    stow
+    # stow # not using atm in favor of custom dotfiles module
     usbutils # lsusb, usb-devices
     wev # wayland event viewer
 
@@ -169,7 +179,6 @@
     # desktop applications
     anki
     calibre
-    calibre-web
     cryptomator
     discord
     dropbox

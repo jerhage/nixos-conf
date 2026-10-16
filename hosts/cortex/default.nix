@@ -31,7 +31,7 @@
   services.openssh.settings.X11Forwarding = true;
   environment.systemPackages = [ pkgs.calibre ];
 
-  my.secrets.enable = false;
+  my.secrets.enable = true;
 
   # Until the dotfiles repo is provisioned here, the links would dangle.
   my.dotfiles.enable = false;

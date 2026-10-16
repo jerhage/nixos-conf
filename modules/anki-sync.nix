@@ -28,6 +28,9 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    # systemd reads EnvironmentFile as root before dropping to DynamicUser.
+    sops.secrets.anki-sync-users.mode = "0400";
+
     systemd.services.anki-sync-server = {
       description = "Anki sync server";
       wantedBy = [ "multi-user.target" ];

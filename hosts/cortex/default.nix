@@ -35,12 +35,6 @@
   # Until the dotfiles repo is provisioned here, the links would dangle.
   my.dotfiles.enable = false;
 
-  # cortex owns the library now: one writer, so no divergent sqlite copies.
-  my.sync.pulls.calibre = {
-    from = "mbp:~/calibre/";
-    to = "/var/lib/calibre/";
-  };
-
   # Encrypted copy in Dropbox using rclone crypt
   my.sync.cloud.calibre-cloud = {
     local = "/var/lib/calibre/";

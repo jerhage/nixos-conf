@@ -111,6 +111,11 @@
   };
   my.vm.shareDotfiles = false;
 
+  my.sync.pulls.pictures = {
+    from = "mbp:~/Pictures/";
+    to = "~/Pictures/";
+  };
+
   # Host aliases live here rather than ~/.ssh/config so they stay per-host Nix
   # config. modules/ssh.nix adds a "Host *" block above this one.
   programs.ssh.extraConfig = ''

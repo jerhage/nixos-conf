@@ -5,11 +5,43 @@ shared behaviour in opt-in modules under `modules/`.
 
 The repo is checked out at `~/nixos-conf`, with no symlink indirection.
 
+Further docs:
+
+- [docs/reference.md](docs/reference.md) for layout, profiles and the VM,
+  dev-shell and dotfile workflows
+- [docs/vm-workflow.md](docs/vm-workflow.md) for writing a host before the
+  machine exists
+- [docs/options.md](docs/options.md) for what each `my.*` option does
+- [docs/secrets.md](docs/secrets.md) for sops, the age keys and what must
+  be in 1Password
+- [docs/backups.md](docs/backups.md) for restic and restoring data
+
 ## Rebuild this machine
+
+```sh
+os-diff
+```
+
+That is the normal way. It builds, prints what would change, and asks before
+switching -- answer no and the running system is untouched. It wraps
+`nh os switch --ask --diff always` and finds the flake through `NH_FLAKE`.
+
+Without the wrapper:
 
 ```sh
 sudo nixos-rebuild switch --flake ~/nixos-conf
 ```
+
+On a host with no checkout, build from the pushed flake instead. This is how
+cortex is deployed: edit and push from another machine, then ssh in and run
+
+```sh
+sudo nixos-rebuild switch --flake github:jerhage/nixos-conf#cortex --refresh
+```
+
+`--refresh` is not optional. A `github:` reference is mutable and nix caches it
+for an hour, so without it the build can quietly use the previous commit. The
+upside of this route is that whatever is running is always a pushed hash.
 
 `nixos-rebuild` picks the host matching the current hostname, so no `#name` is
 needed. To check without activating anything:
@@ -30,7 +62,7 @@ pin that whole system closure until removed. `rm -f result` when done, or use
 3. `nixos-generate-config --show-hardware-config > hosts/<hostname>/hardware-configuration.nix`
 4. Edit `hosts/<hostname>/default.nix`: set `my.user`, pick profiles, and set
    `system.stateVersion` to the NixOS release that machine was installed with.
-5. `git add hosts/<hostname>` — flakes ignore untracked files.
+5. `git add hosts/<hostname>`, because flakes ignore untracked files.
 6. `sudo nixos-rebuild switch --flake ~/nixos-conf#<hostname>`
    (the `#<hostname>` is only needed this first time, before the hostname is set)
 
@@ -40,214 +72,13 @@ The host directory name _is_ the hostname; `flake.nix` contains no hostnames.
 
 A rebuilt host needs two things by hand. Neither is in the flake.
 
-- `sudo tailscale up` — joins the tailnet. Identity lives in
+- `sudo tailscale up` joins the tailnet. Identity lives in
   `/var/lib/tailscale`. Until this runs, `tailscale-serve.service` retries and
   fails, so services are unreachable even though everything else is up.
-- Restoring data: service state and anything under `/var/lib` that is not
-  generated. The config fixes ownership on it, but cannot supply the bytes.
-  `restic-local restore latest --target /` on a host with `my.backup`.
+- Restoring data: service state and anything under `/var/lib` the config does
+  not generate. It sets ownership and permissions, but the files themselves have
+  to come from a backup. On a host with `my.backup`:
+  `restic-local restore latest --target /`.
 
 `tailscale serve` used to be a third. `my.server.tailscaleServe` now does it,
 because a reinstall dropped it silently and nothing pointed at the cause.
-
-## Layout
-
-| Path                   | Purpose                                                                            |
-| ---------------------- | ---------------------------------------------------------------------------------- |
-| `flake.nix`            | Discovers hosts via `readDir ./hosts`. Never edited to add a host.                 |
-| `modules/`             | Shared NixOS modules, each behind a `my.<name>.enable` option.                     |
-| `modules/default.nix`  | Imports every module. Every host gets all of them; they do nothing unless enabled. |
-| `modules/profiles.nix` | Bundles modules for a kind of machine (`base`, `workstation`).                     |
-| `hosts/<name>/`        | Per-machine config and its `hardware-configuration.nix`.                           |
-| `pkgs/<name>/`         | Packages defined here rather than in nixpkgs, pulled in with `callPackage`.        |
-| `templates/host/`      | Starting point for a new host.                                                     |
-
-Always on regardless of profile: `nix.nix`, `user.nix`, `git.nix`, `kernel.nix`,
-`profiles.nix`.
-
-## Profiles
-
-`my.profiles.base` is the interactive-but-headless set: command-line tools, bash
-configuration, ssh agent, dotfile links, networking and input methods.
-`my.profiles.workstation` turns on `base` plus the graphical session: compositor,
-desktop shell, portals, theming, audio, bluetooth, fonts, input device rules,
-power management and mpv. A host normally sets one profile and then only its
-hardware and machine-specific bits.
-
-Everything a profile sets uses `lib.mkDefault`, so a host can override any of it
-with a plain assignment.
-
-## Conventions
-
-- Packages live in the module that owns the feature, not in the host list, so
-  enabling a feature brings its tools along without the host restating them.
-- The host package list is for applications that are not tied to a module.
-- Options that take a fixed set of values use `lib.types.enum`, so a typo fails
-  at eval rather than silently resolving to something else. See
-  `my.kernel.branch`, `my.power.profile` and `my.greeter.backend`.
-- Which display manager greets at login is `my.greeter.backend`, set per host.
-  Switching between them is one word; `none` means TTY login.
-- `my.cli.enable` is the baseline command-line set, on for every host via the
-  `base` profile. The test for inclusion is whether a headless machine would
-  want it; desktop-only tools belong in the host list.
-- `my.i18n.languages` adds a locale per language, and the matching fcitx5 engine
-  only when `my.i18n.inputMethod.enable` is also on. `base` sets locales, which
-  any host needs to handle CJK filenames; `workstation` adds the input method,
-  which needs a graphical session.
-- `my.devtools.languages` takes a list of toolchain names and installs a
-  complete set for each -- `rust` means rustc and rust-analyzer, not just cargo.
-  Typed as an enum, so an unknown name fails at eval. Current sets: bun, c,
-  deno, elixir, go, nix, node, python, rust.
-- `my.devtools.agentSandbox` installs nono, a Landlock sandbox for AI agent
-  harnesses. The option installs the tool only. Profiles are not managed by Nix:
-  they live in `~/dotfiles/nono` and the whole `profiles` directory is linked by
-  `my.dotfiles.links`, so adding one is just a new file there. Two lines of them
-  -- `agent` and `agent-dots` extend nono's own `default` and suit any harness,
-  while `claude-base` and `claude-dots` extend the Claude Code profile that
-  `nono pull nolabs-ai/claude` installs. The `-dots` variants add the dotfiles
-  repo minus `bash` and `nono`. Run one as
-  `nono run --profile claude-dots --allow-cwd -- claude`.
-- `sandbox` comes with `my.devtools.agentSandbox` and is the launcher to use:
-  `sandbox [--profile <name>] [nono options --] <command> [args...]`, so
-  `sandbox --profile agent-dots claude --resume` and `sandbox pi` both work.
-  Options stop at the first non-option, so the harness gets its own argv
-  untouched, even a `--profile` of its own. Everything before the command is
-  for `nono run`: `--profile` is captured, which is what lets
-  `my.devtools.sandboxProfile` supply it when absent and keeps nono receiving
-  exactly one, and the rest is forwarded verbatim. Use a `--` when a forwarded
-  option takes a value, as `sandbox --allow /srv/data -- claude` does, or the
-  value is mistaken for the command.
-  It denies the agent every private network range, listed in
-  `my.devtools.sandboxDenyRanges`, which nono cannot do -- nono's network rules
-  are hostnames and ports, so a deny there is bypassed by connecting to a bare
-  address. The ranges are enforced by systemd `IPAddressDeny`, which only
-  attaches for system units, so the launcher needs `sudo` and prompts once.
-- `my.ssh.server.interfaces` lists the interfaces that accept SSH; port 22 is
-  opened per interface rather than globally, so bringing up wifi, a VM bridge or
-  a container veth does not expose sshd on it. Defaults to `[ "tailscale0" ]`,
-  so a new host is tailnet-only until it opts into more. Interface names are
-  host-specific (`ip -br link`), which is why the list lives on the host.
-- `my.dns.systemdResolved` is off by default and exists as a documented escape
-  hatch: turn it on if DNS starts resolving intermittently, which usually means
-  NetworkManager, Tailscale and a VPN are racing over `/etc/resolv.conf`.
-- `my.sync.cloud.<name>` syncs against an rclone remote. `push-<name>` mirrors
-  and deletes; `pull-<name>` only merges, because a restore should never remove
-  local files.
-- `my.server.sites.<name>` publishes a service through Caddy. `routing = "path"`
-  serves everything on one origin behind a single `tailscale serve`, and sets
-  the prefix headers apps need; `routing = "host"` switches to subdomains later
-  without touching the service definitions. `cors = [ "https://app.example" ]`
-  allows browser javascript on those origins to call the service, answering the
-  preflight in Caddy so the app behind it never sees an `OPTIONS`.
-- `my.tailscale.tailnet` holds the MagicDNS suffix so a config can name another
-  host on the tailnet -- `"https://nucleus.${config.my.tailscale.tailnet}"` --
-  and `my.tailscale.fqdn` is this host's own name.
-- `my.secrets.enable` turns on sops-nix. A host decrypts with an age key derived
-  from its ssh host key, so reinstalling one means re-running `ssh-to-age`, adding
-  it to `.sops.yaml` and `sops updatekeys`. Hosts only decrypt the secrets they
-  declare.
-- `my.sync.pulls.<name>` declares an rsync pull from another host and generates
-  `pull-<name>` and `-dry`, which merge. `mirror = true` adds the deleting
-  variants: deletion is opt-in per entry rather than something to remember.
-  Shared flags live in `my.sync.flags`.
-- `nix fmt` formats every `.nix` file in the repo via `nixfmt-tree`. Run it
-  after changes. Passing a directory to `nixfmt` directly is deprecated, so
-  format single files as `nixfmt <file>` or use `nix fmt` for the tree.
-
-## Backups
-
-`my.backup` runs restic daily to `rclone:dropbox:restic`, keeping 7 daily, 4
-weekly and 12 monthly snapshots. The repo is not inside the `crypt:` remote:
-restic already encrypts contents, filenames and structure.
-
-Snapshots are cheap because files are split into content-hashed chunks and
-stored once. A snapshot is a tree of references, so an unchanged 20 GB costs
-kilobytes. restic also skips _reading_ files whose size and mtime match the
-previous snapshot -- change the path list and that parent match is lost, so the
-next run re-reads everything even though it uploads almost nothing.
-
-The `restic-local` wrapper carries the repository, password file and rclone
-config, so none of that needs typing.
-
-```sh
-restic-local snapshots                    # list; note an ID
-restic-local ls latest /var/lib/calibre   # browse a snapshot
-restic-local diff <id1> <id2>             # what changed between two
-```
-
-Restoring:
-
-```sh
-# one file, to stdout
-restic-local dump latest /var/lib/calibre/metadata.db > ./recovered.db
-
-# a subtree, somewhere safe to inspect first
-restic-local restore latest --target /tmp/check --include /var/lib/calibre
-
-# everything, in place, after losing a disk
-restic-local restore latest --target /
-```
-
-To hunt for something without knowing which snapshot has it, mount them all:
-
-```sh
-sudo mkdir -p /mnt/snaps
-sudo restic-local mount /mnt/snaps     # /mnt/snaps/snapshots/<date>/...
-```
-
-Two things worth noting cause it messed me up:
-
-- **A `DynamicUser` service keeps state in `/var/lib/private/<name>` and
-  symlinks `/var/lib/<name>` to it.** restic does not follow symlinks. The
-  module resolves paths with `readlink -f` at backup time, so the path
-  works, but a snapshot will look complete while actually not having anything.
-- **Verify with a restore, never a file count.** The first snapshot here exited
-  cleanly, reported 20.8 GiB and listed every path, while containing none of
-  the anki data.
-
-The repo password lives in sops and in 1Password. Best not lost both it and the age keys
-else every snapshot is permanently unreadable.
-
-## Per-project dev environments
-
-System-wide toolchains come from `my.devtools.languages`. For a project that
-needs a specific runtime version, scaffold a shell instead of installing it
-globally:
-
-```sh
-nix flake init -t ~/nixos-conf#devshell   # plain flake, just packages on PATH
-nix flake init -t ~/nixos-conf#devenv     # devenv, for language helpers and services
-direnv allow                              # both ship an .envrc
-```
-
-Versions are pinned by the template's own `flake.lock`, so a project stays on
-its runtime regardless of what the system has. `programs.direnv` with
-`nix-direnv` is enabled by `my.devtools`, so entering a directory enters its
-shell.
-
-## Dotfiles
-
-Application configs live in a separate dotfiles repo, each in its own native
-format. Nix does not own their contents -- it only declares the symlinks, via
-`my.dotfiles.links` in the host file:
-
-```nix
-my.dotfiles.links = {
-  ".bashrc" = "bash/.bashrc";
-  ".config/nvim" = "nvim/.config/nvim";
-};
-```
-
-Each entry becomes a systemd-tmpfiles `L+` rule, applied on every switch and
-again at login. The symlink points at the real file in the repo, so edits take
-effect immediately with no rebuild. It is a declarative `stow`.
-
-Three caveats:
-
-- Removing an entry does not remove the symlink it already created. Prune by
-  hand.
-- There is no validation that the dotfiles repo is present; a missing source
-  gives a dangling symlink.
-- Do not point `stow` at a path that `my.dotfiles.links` also manages. Both
-  create symlinks and neither knows about the other, so whichever ran last
-  wins and the result depends on ordering. Pick one mechanism per path.

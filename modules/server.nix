@@ -26,18 +26,46 @@ let
       }
     '';
 
+  # One matcher per origin: Access-Control-Allow-Origin takes a single value,
+  # and a browser rejects a wildcard on any request carrying cookies.
+  corsBlock =
+    name: s:
+    lib.optionalString (s.cors != [ ]) (
+      lib.concatStringsSep "\n" (
+        lib.imap0 (i: origin: ''
+          @cors_${name}_${toString i} header Origin ${origin}
+          header @cors_${name}_${toString i} {
+            Access-Control-Allow-Origin "${origin}"
+            Access-Control-Allow-Credentials "true"
+            Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+            Access-Control-Allow-Headers "Content-Type, Authorization"
+            Access-Control-Max-Age "86400"
+            Vary Origin
+            defer
+          }
+        '') s.cors
+      )
+      # Answer the preflight here; the app behind this would 405 it.
+      + ''
+        @preflight_${name} method OPTIONS
+        respond @preflight_${name} 204
+      ''
+    );
+
   site =
     name: s:
     if cfg.routing == "path" then
       ''
         redir /${name} /${name}/ 301
         handle_path /${name}/* {
+          ${corsBlock name s}
           ${proxyBlock name s}
           ${s.extraConfig}
         }
       ''
     else
       ''
+        ${corsBlock name s}
         ${proxyBlock name s}
         ${s.extraConfig}
       '';
@@ -111,13 +139,21 @@ in
               example = "header_up Host {upstream_hostport}";
               description = "Directives inside this service's reverse_proxy block.";
             };
+            cors = lib.mkOption {
+              type = lib.types.listOf lib.types.str;
+              default = [ ];
+              example = [ "https://app.example.com" ];
+              description = ''
+                Origins allowed to call this service from browser javascript.
+                Scheme and port must match what the browser sends, and only a
+                browser enforces this: native clients and scripts ignore CORS
+                entirely, so they need nothing here.
+              '';
+            };
             extraConfig = lib.mkOption {
               type = lib.types.lines;
               default = "";
-              description = ''
-                Caddy directives for this service, after the proxy. Where
-                header fixups go when a service omits CORS.
-              '';
+              description = "Caddy directives for this service, after the proxy.";
             };
           };
         }

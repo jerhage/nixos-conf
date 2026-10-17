@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
   imports = [ ./hardware-configuration.nix ];
 
@@ -12,6 +12,7 @@
   ];
 
   my.tailscale.enable = true;
+  my.tailscale.tailnet = "tail5e24fe.ts.net";
 
   # eno1 keeps ssh reachable on the LAN; without it a switch before tailscale
   # is up locks you out.
@@ -55,6 +56,7 @@
   my.server.enable = true;
   my.server.tailscaleServe = true;
   my.server.sites.books.port = 8083;
+  my.server.sites.books.cors = [ "https://reader.gongbu.me" ];
   my.server.sites.anki.port = 8080;
 
   # Clients point at https://<host>/anki/ -- the trailing slash matters.
@@ -62,6 +64,7 @@
   my.ankiSync.enable = true;
 
   # Upstream builds filename* from the romanised name, so downloads lose Korean.
+  # Drop this once nixpkgs ships calibre-web newer than the 2026-03-01 nightly.
   services.calibre-web.package = pkgs.calibre-web.overrideAttrs (old: {
     postPatch = (old.postPatch or "") + ''
       substituteInPlace src/calibreweb/cps/helper.py \

@@ -11,6 +11,24 @@ in
   options.my.tailscale = {
     enable = lib.mkEnableOption "Tailscale mesh VPN";
 
+    tailnet = lib.mkOption {
+      type = lib.types.str;
+      default = "";
+      example = "tail1a2b3c.ts.net";
+      description = ''
+        MagicDNS suffix of the tailnet, from `tailscale status --json | jq -r
+        .MagicDNSSuffix`. Lets a config name another host on the tailnet without
+        hardcoding the suffix at every use.
+      '';
+    };
+
+    fqdn = lib.mkOption {
+      type = lib.types.str;
+      readOnly = true;
+      default = lib.optionalString (cfg.tailnet != "") "${config.networking.hostName}.${cfg.tailnet}";
+      description = "This host's MagicDNS name. Empty until `tailnet` is set.";
+    };
+
     gui = lib.mkEnableOption ''
       trayscale, a GTK4 tray applet and window around the Tailscale CLI.
       Separate from `enable` so a headless host does not pull in GTK.

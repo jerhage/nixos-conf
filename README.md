@@ -121,7 +121,12 @@ with a plain assignment.
 - `my.server.sites.<name>` publishes a service through Caddy. `routing = "path"`
   serves everything on one origin behind a single `tailscale serve`, and sets
   the prefix headers apps need; `routing = "host"` switches to subdomains later
-  without touching the service definitions.
+  without touching the service definitions. `cors = [ "https://app.example" ]`
+  allows browser javascript on those origins to call the service, answering the
+  preflight in Caddy so the app behind it never sees an `OPTIONS`.
+- `my.tailscale.tailnet` holds the MagicDNS suffix so a config can name another
+  host on the tailnet -- `"https://nucleus.${config.my.tailscale.tailnet}"` --
+  and `my.tailscale.fqdn` is this host's own name.
 - `my.secrets.enable` turns on sops-nix. A host decrypts with an age key derived
   from its ssh host key, so reinstalling one means re-running `ssh-to-age`, adding
   it to `.sops.yaml` and `sops updatekeys`. Hosts only decrypt the secrets they

@@ -107,6 +107,21 @@ with a plain assignment.
   `nono pull nolabs-ai/claude` installs. The `-dots` variants add the dotfiles
   repo minus `bash` and `nono`. Run one as
   `nono run --profile claude-dots --allow-cwd -- claude`.
+- `sandbox` comes with `my.devtools.agentSandbox` and is the launcher to use:
+  `sandbox [--profile <name>] [nono options --] <command> [args...]`, so
+  `sandbox --profile agent-dots claude --resume` and `sandbox pi` both work.
+  Options stop at the first non-option, so the harness gets its own argv
+  untouched, even a `--profile` of its own. Everything before the command is
+  for `nono run`: `--profile` is captured, which is what lets
+  `my.devtools.sandboxProfile` supply it when absent and keeps nono receiving
+  exactly one, and the rest is forwarded verbatim. Use a `--` when a forwarded
+  option takes a value, as `sandbox --allow /srv/data -- claude` does, or the
+  value is mistaken for the command.
+  It denies the agent every private network range, listed in
+  `my.devtools.sandboxDenyRanges`, which nono cannot do -- nono's network rules
+  are hostnames and ports, so a deny there is bypassed by connecting to a bare
+  address. The ranges are enforced by systemd `IPAddressDeny`, which only
+  attaches for system units, so the launcher needs `sudo` and prompts once.
 - `my.ssh.server.interfaces` lists the interfaces that accept SSH; port 22 is
   opened per interface rather than globally, so bringing up wifi, a VM bridge or
   a container veth does not expose sshd on it. Defaults to `[ "tailscale0" ]`,

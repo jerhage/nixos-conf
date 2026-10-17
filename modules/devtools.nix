@@ -8,6 +8,14 @@
 let
   cfg = config.my.devtools;
 
+  nonoPkg = inputs.nono.packages.${pkgs.stdenv.hostPlatform.system}.prebuilt;
+
+  sandboxLauncher = pkgs.callPackage ../pkgs/sandbox {
+    nono = nonoPkg;
+    profile = cfg.sandboxProfile;
+    denyRanges = cfg.sandboxDenyRanges;
+  };
+
   languageSets = {
     bun = with pkgs; [
       bun
@@ -72,6 +80,39 @@ in
       nono, a Landlock sandbox for AI agent harnesses. Installs the tool only;
       profiles live in ~/.config/nono/profiles and are not managed here
     '';
+
+    sandboxProfile = lib.mkOption {
+      type = lib.types.str;
+      default = "agent";
+      description = "nono profile `sandbox` uses when none is given.";
+    };
+
+    sandboxDenyRanges = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [
+        "100.64.0.0/10"
+        "fd7a:115c:a1e0::/48"
+        "10.0.0.0/8"
+        "172.16.0.0/12"
+        "192.168.0.0/16"
+        "fc00::/7"
+        "link-local"
+      ];
+      description = ''
+        Destinations `sandbox` may not reach, as systemd `IPAddressDeny`
+        values -- CIDRs or names systemd knows, like `link-local`.
+
+        nono cannot express these: its network rules are hostnames and ports,
+        so a deny list there is bypassed by connecting to a bare address.
+
+        Covers the whole of each private range rather than the subnet in use,
+        because this is an enumeration and anything absent is reachable -- a
+        container bridge on 172.17.0.0/16 being the easy way to grow a hole.
+
+        Do not add `localhost`: nono's proxy is on loopback, and denying it
+        leaves the agent with no network at all.
+      '';
+    };
   };
 
   config = lib.mkMerge [
@@ -81,7 +122,8 @@ in
 
     (lib.mkIf cfg.agentSandbox {
       environment.systemPackages = [
-        inputs.nono.packages.${pkgs.stdenv.hostPlatform.system}.prebuilt
+        nonoPkg
+        sandboxLauncher
       ];
     })
 

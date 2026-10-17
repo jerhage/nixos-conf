@@ -56,7 +56,10 @@
   my.server.enable = true;
   my.server.tailscaleServe = true;
   my.server.sites.books.port = 8083;
-  my.server.sites.books.cors = [ "https://reader.gongbu.me" ];
+  my.server.sites.books.cors = [
+    "https://reader.gongbu.me"
+    "http://localhost:5173"
+  ];
   my.server.sites.anki.port = 8080;
 
   # Clients point at https://<host>/anki/ -- the trailing slash matters.

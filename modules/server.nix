@@ -26,14 +26,35 @@ let
       }
     '';
 
-  # One matcher per origin: Access-Control-Allow-Origin takes a single value,
-  # and a browser rejects a wildcard on any request carrying cookies.
-  corsBlock =
+  # Named matchers only work at site level, and path routing shares one block.
+  corsMatchers =
+    name: s:
+    let
+      scope = lib.optionalString (cfg.routing == "path") "path /${name} /${name}/*";
+    in
+    lib.optionalString (s.cors != [ ]) (
+      lib.concatStringsSep "\n" (
+        lib.imap0 (i: origin: ''
+          @cors_${name}_${toString i} {
+            ${scope}
+            header Origin ${origin}
+          }
+        '') s.cors
+      )
+      + ''
+        @preflight_${name} {
+          ${scope}
+          method OPTIONS
+        }
+      ''
+    );
+
+  # One block per origin: the header takes one value, and never a wildcard with cookies.
+  corsHandlers =
     name: s:
     lib.optionalString (s.cors != [ ]) (
       lib.concatStringsSep "\n" (
         lib.imap0 (i: origin: ''
-          @cors_${name}_${toString i} header Origin ${origin}
           header @cors_${name}_${toString i} {
             Access-Control-Allow-Origin "${origin}"
             Access-Control-Allow-Credentials "true"
@@ -45,29 +66,35 @@ let
           }
         '') s.cors
       )
-      # Answer the preflight here; the app behind this would 405 it.
+      # Preflights must not get the redirect below; browsers do not follow one.
       + ''
-        @preflight_${name} method OPTIONS
         respond @preflight_${name} 204
       ''
     );
 
+  # route: Caddy's own order runs redir before respond, 301-ing the preflight.
   site =
     name: s:
     if cfg.routing == "path" then
       ''
-        redir /${name} /${name}/ 301
-        handle_path /${name}/* {
-          ${corsBlock name s}
-          ${proxyBlock name s}
-          ${s.extraConfig}
+        ${corsMatchers name s}
+        route {
+          ${corsHandlers name s}
+          redir /${name} /${name}/ 301
+          handle_path /${name}/* {
+            ${proxyBlock name s}
+            ${s.extraConfig}
+          }
         }
       ''
     else
       ''
-        ${corsBlock name s}
-        ${proxyBlock name s}
-        ${s.extraConfig}
+        ${corsMatchers name s}
+        route {
+          ${corsHandlers name s}
+          ${proxyBlock name s}
+          ${s.extraConfig}
+        }
       '';
 in
 {

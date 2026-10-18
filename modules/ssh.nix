@@ -11,7 +11,7 @@ let
     name: m:
     let
       tailnetName = if m.tailnet != null then m.tailnet else name;
-      fallback = lib.optionalString (m.lan != null && m.tailnet != null) ''
+      fallback = lib.optionalString (m.lan != null) ''
         Match host ${name} exec "timeout 2 bash -c 'exec 3<>/dev/tcp/${tailnetName}/22' 2>/dev/null"
           HostName ${tailnetName}
 

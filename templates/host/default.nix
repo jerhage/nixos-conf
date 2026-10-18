@@ -14,8 +14,8 @@
   my.profiles.workstation.enable = true;
 
   # Which greeter logs you in. One of: ly, noctalia, none.
-  # Defaults to "ly"; "noctalia" needs the noctalia-greeter flake input.
-  # my.greeter.backend = "ly";
+  # workstation sets "ly"; "noctalia" needs the noctalia-greeter flake input.
+  # my.greeter.backend = "noctalia";
 
   # Machine-specific capabilities (see modules/ for the full list).
   # my.nvidia.enable = true;

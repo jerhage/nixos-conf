@@ -10,8 +10,10 @@ profiles see [reference.md](reference.md); for restoring data see
 - Options that take a fixed set of values use `lib.types.enum`, so a typo fails
   at eval rather than silently resolving to something else. See
   `my.kernel.branch`, `my.power.profile` and `my.greeter.backend`.
-- Which display manager greets at login is `my.greeter.backend`, set per host.
-  Switching between them is one word; `none` means TTY login.
+- Which display manager greets at login is `my.greeter.backend`. It defaults to
+  `none` so a headless host gets no display manager, and
+  `my.profiles.workstation` sets `ly`. Switching is one word; a host that wants
+  something else assigns it directly, as nucleus does with `noctalia`.
 - `my.cli.enable` is the baseline command-line set, on for every host via the
   `base` profile. The test for inclusion is whether a headless machine would
   want it; desktop-only tools belong in the host list.

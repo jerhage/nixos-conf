@@ -9,7 +9,7 @@ in
       "ly"
       "noctalia"
     ];
-    default = "ly";
+    default = "none";
     description = ''
       Which display manager greets at login.
 
@@ -18,8 +18,8 @@ in
         `noctalia msg greeter-sync` pushes the current wallpaper and palette to
         it. Comes from the noctalia-greeter flake input, and also pulls in
         greetd, Polkit and AccountsService.
-      - `none`: no display manager at all. Deliberate choice for logging in at a
-        TTY and starting the compositor by hand.
+      - `none`: no display manager at all, and the default, so a headless host
+        gets none without opting out. `my.profiles.workstation` sets `ly`.
     '';
   };
 

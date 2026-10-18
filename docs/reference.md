@@ -19,8 +19,8 @@ Option-by-option notes are in [options.md](options.md), restoring data in
 Always on regardless of profile, having no enable option of their own:
 `git.nix`, `greeter.nix`, `kernel.nix`, `nix.nix`, `user.nix`, plus `sync.nix`,
 `sync-cloud.nix` and `vm.nix`, which are inert until something is configured.
-`greeter.nix` is the one to watch: it defaults `backend` to `ly`, so every host
-gets a display manager whether a profile asked for one or not.
+They are all inert until configured: `greeter.nix` defaults `backend` to
+`none`, and `my.profiles.workstation` is what sets `ly`.
 
 ## Profiles
 

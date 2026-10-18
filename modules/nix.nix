@@ -9,6 +9,13 @@
         "flakes"
       ];
 
+      # Lets this user push an unsigned closure here, which is what
+      # `nixos-rebuild --target-host` does. Root-equivalent on this host.
+      trusted-users = [
+        "root"
+        config.my.user
+      ];
+
       # Free space mid-build instead of failing: once free space drops below
       # min-free, nix collects until it reaches max-free.
       min-free = 10 * 1024 * 1024 * 1024;

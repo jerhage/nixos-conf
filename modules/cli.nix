@@ -61,5 +61,9 @@ in
       EDITOR = "nvim";
       VISUAL = "nvim";
     };
+
+    # Without the terminal's terminfo, any pager fails over ssh: `systemctl
+    # status` from ghostty dies with "'xterm-ghostty': unknown terminal type".
+    environment.enableAllTerminfo = true;
   };
 }

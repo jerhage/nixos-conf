@@ -18,6 +18,12 @@ in
     environment.systemPackages = with pkgs; [
       bat
       btop
+      ffmpeg
+      lazygit
+      nmap
+      tree-sitter
+      usbutils # lsusb, usb-devices
+      (callPackage ../pkgs/ns { })
       curl
       dnsutils # dig
       dysk

@@ -35,6 +35,7 @@ in
       my.power.enable = lib.mkDefault true;
 
       # desktop applications
+      my.apps.enable = lib.mkDefault true;
       my.mpv.enable = lib.mkDefault true;
       my.terminals.enable = lib.mkDefault true;
 

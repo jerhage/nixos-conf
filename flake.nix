@@ -28,11 +28,18 @@
         lib.filterAttrs (_: type: type == "directory") (builtins.readDir ./hosts)
       );
 
+      # Flake inputs reachable as plain pkgs.<name>, so a module names
+      # `zen-browser` instead of inputs.zen-browser.packages.<system>.<variant>.
+      overlay = final: _prev: {
+        zen-browser = inputs.zen-browser.packages.${final.stdenv.hostPlatform.system}.twilight;
+      };
+
       mkHost =
         name:
         lib.nixosSystem {
           specialArgs = { inherit inputs; };
           modules = [
+            { nixpkgs.overlays = [ overlay ]; }
             ./modules
             ./hosts/${name}
             { networking.hostName = name; }

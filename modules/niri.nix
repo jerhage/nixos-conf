@@ -14,6 +14,7 @@ in
 
   config = lib.mkIf cfg.enable {
     environment.systemPackages = [
+      pkgs.wev # wayland event viewer
       pkgs.xwayland-satellite
       (pkgs.callPackage ../pkgs/niri-keys { })
     ];

@@ -10,6 +10,8 @@
     ./vm.nix
 
     # opt-in features
+    ./accounting.nix
+    ./apps.nix
     ./audio.nix
     ./bluetooth.nix
     ./cli.nix

@@ -78,6 +78,13 @@ profiles see [reference.md](reference.md); for restoring data see
   It lives there rather than in `niri.nix` to keep the feature modules
   importable on their own. A host sets an entry to null to take a path back.
   See [reference.md](reference.md#dotfiles).
+- `my.apps.enable` installs the graphical applications any workstation of mine
+  wants, so a new one does not copy a package list. `exclude` drops individual
+  ones by `lib.getName`, which is not always the attribute name: zen-browser is
+  `zen-twilight`. A name matching nothing fails the build rather than silently
+  doing nothing.
+- `my.accounting.enable` installs beancount and fava. Off by default, since it
+  is a workflow rather than part of a workstation.
 - `my.terminals.enable` installs ghostty and wezterm. They get a module rather
   than a line in a host's package list because their configs are tracked, and
   the dotfile link map keys on this option.

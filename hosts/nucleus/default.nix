@@ -125,55 +125,13 @@
     ];
   };
 
+  my.apps.enable = true;
+  my.accounting.enable = true;
+
+  # One-offs, not part of any module's set.
   environment.systemPackages = with pkgs; [
-    # cli / system
-    ffmpeg
-    # stow # not using atm in favor of custom dotfiles module
-    usbutils # lsusb, usb-devices
-    wev # wayland event viewer
-
-    # dev
-    lazygit
-    tree-sitter
-
-    # network / security
-    nmap
-    openvpn
-    proton-vpn
-    proton-pass
-    rclone
-
-    # desktop applications
-    anki
-    # calibre # using calibre-web via @cortex now
-    cryptomator
-    discord
-    dropbox
-    gcolor3
-    imv
-    kdePackages.kate
-    obs-studio
-    obsidian
-    playerctl
-    qbittorrent
-    spotify
-    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.twilight
-
-    # accounting
-    beancount
-    fava
-
     claude-code
-
-    (pkgs.writeShellApplication {
-      name = "ns";
-      runtimeInputs = with pkgs; [
-        fzf
-        nix-search-tv
-      ];
-      excludeShellChecks = [ "SC2016" ];
-      text = builtins.readFile "${pkgs.nix-search-tv.src}/nixpkgs.sh";
-    })
+    rclone # only enabled here because not enabling cloud sync module atm
   ];
 
   system.stateVersion = "25.11";

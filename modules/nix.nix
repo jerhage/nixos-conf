@@ -43,4 +43,8 @@
 
   # Builds and shows the diff, then asks. Answer no to leave the system alone.
   environment.shellAliases.os-diff = "nh os switch --ask --diff always";
+
+  # Same, against another host: `os-push cortex`. nh takes the configuration
+  # name from the target, so the hostname is the only argument.
+  environment.shellAliases.os-push = "nh os switch --ask --diff always --target-host";
 }

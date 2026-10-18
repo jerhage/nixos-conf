@@ -32,17 +32,6 @@ Without the wrapper:
 sudo nixos-rebuild switch --flake ~/nixos-conf
 ```
 
-On a host with no checkout, build from the pushed flake instead. This is how
-cortex is deployed: edit and push from another machine, then ssh in and run
-
-```sh
-sudo nixos-rebuild switch --flake github:jerhage/nixos-conf#cortex --refresh
-```
-
-`--refresh` is not optional. A `github:` reference is mutable and nix caches it
-for an hour, so without it the build can quietly use the previous commit. The
-upside of this route is that whatever is running is always a pushed hash.
-
 `nixos-rebuild` picks the host matching the current hostname, so no `#name` is
 needed. To check without activating anything:
 
@@ -54,6 +43,44 @@ nixos-rebuild dry-activate --flake ~/nixos-conf # shows which units a switch wou
 `build` leaves a `result` symlink, which Nix registers as a GC root -- it will
 pin that whole system closure until removed. `rm -f result` when done, or use
 `--no-link`.
+
+## Rebuild another host
+
+Build here and copy the result over, rather than making the target build it:
+
+```sh
+cd ~/nixos-conf
+nixos-rebuild switch --flake .#cortex --target-host cortex --sudo --ask-sudo-password
+```
+
+Run it as your own user, not under sudo, since it needs your ssh keys. It
+deploys the working tree, so nothing has to be committed first.
+
+This requires the target to trust you as a pusher. Without
+`nix.settings.trusted-users` including your user there, it fails with:
+
+```
+error: cannot add path '/nix/store/...' because it lacks a signature by a trusted key
+```
+
+`modules/nix.nix` sets that for every host, so a host built from this repo
+already allows it. See [docs/options.md](docs/options.md#trusted-users) for
+what being trusted grants.
+
+### When there is no path from here
+
+Build on the target from the pushed flake:
+
+```sh
+sudo nixos-rebuild switch --flake github:jerhage/nixos-conf#cortex --refresh
+```
+
+`--refresh` is not optional. A `github:` reference is mutable and nix caches it
+for an hour, so without it the build can quietly use the previous commit. This
+route needs the change committed and pushed, and it makes the target build its
+own closure, but what is running is always an identifiable pushed hash. It is
+also the only route into a host that does not trust you yet, which is how
+cortex was first brought up.
 
 ## Add a new host
 

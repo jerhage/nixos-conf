@@ -153,11 +153,16 @@ git commit && git push
 Both halves are required: flakes ignore untracked files, and cortex builds from
 the pushed commit rather than the working tree.
 
-**5. First switch from the pushed flake. (cortex)**
+**5. First switch, from the pushed flake. (cortex)**
 
 ```sh
 sudo nixos-rebuild switch --flake github:jerhage/nixos-conf#cortex --refresh
 ```
+
+This first one has to run on the machine. `--target-host` pushes an unsigned
+closure, which the target refuses until it trusts you as a pusher, and it only
+trusts you once it has been built from this repo. So: this route once, then
+`--target-host` from nucleus afterwards.
 
 `my.secrets.enable` is still `false` at this point, so nothing here needs a
 decryption key.
@@ -200,10 +205,16 @@ fails to decrypt with no indication that the recipient list is the reason.
 **9. Turn secrets on, then push and switch again. (nucleus, then cortex)**
 
 Set `my.secrets.enable = true` and `my.secrets.file = ../../secrets/cortex.yaml`
-in `hosts/cortex/default.nix`, commit, push, and on cortex:
+in `hosts/cortex/default.nix`. The host trusts you as a pusher by now, so deploy
+from nucleus:
 
 ```sh
-sudo nixos-rebuild switch --flake github:jerhage/nixos-conf#cortex --refresh
+nixos-rebuild switch --flake .#cortex --target-host cortex --sudo --ask-sudo-password
+```
+
+Then on the new host:
+
+```sh
 sudo ls -l /run/secrets/
 ```
 

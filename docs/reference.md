@@ -65,6 +65,69 @@ host's secrets and those paths stay untested until the real machine runs.
 this way, what the guest is useful for checking, and the things that looked
 correct in a VM and still broke on hardware.
 
+## Updating
+
+### Where packages come from
+
+One revision of nixpkgs, pinned in `flake.lock` and selected by the
+`nixos-26.05` branch in `flake.nix`. Channels are off, and both
+`nix.registry.nixpkgs` and `nix.nixPath` point at that same input, so
+`nix shell nixpkgs#foo`, `nix run`, `nix-shell -p foo`, `<nixpkgs>` and `,` all
+resolve to the revision the system was built from.
+
+The consequence: nothing gets newer on its own. A package released yesterday is
+not reachable until the lock moves, and `nix shell nixpkgs#foo` will keep
+handing over the system's version however long that is. That is the trade for
+never getting a binary from a nixpkgs the system does not run.
+
+### Routine update
+
+```sh
+nix flake update                 # every input
+nix flake update nixpkgs         # or just one
+git diff flake.lock              # what moved, before building anything
+os-diff                          # build, show the package diff, then ask
+```
+
+Answer no at the prompt and nothing changed. Commit `flake.lock` once a switch
+works, since that file is the record of what is running.
+
+For the other hosts, push and then:
+
+```sh
+os-push cortex
+```
+
+If a switch boots badly, the previous generation is in the boot menu, or
+`sudo nixos-rebuild switch --rollback` goes back without rebooting.
+
+### Moving to a new nixpkgs release
+
+Release branches are `nixos-YY.MM`, roughly May and November. To go from 26.05
+to 26.11:
+
+1. Read the release notes first, specifically the incompatibilities section.
+   This is the one upgrade where options get renamed or removed under you.
+2. Change the branch in `flake.nix`:
+   `nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.11";`
+3. `nix flake update nixpkgs`. Every input that `follows` nixpkgs moves with it.
+4. Build each host without activating anything:
+   `nix eval .#nixosConfigurations.<host>.config.system.build.toplevel.drvPath`
+   for a cheap eval, then `nixos-rebuild build --flake .#<host>` to compile.
+   Eval errors here are renamed or removed options, and they are the whole
+   point of doing this step before switching.
+5. Switch the least important host first.
+
+Leave `system.stateVersion` alone. It records the release a host was *installed*
+with, not the release it runs, and exists so stateful defaults keep their old
+behaviour. nucleus is `25.11` and cortex is `26.05` for that reason, and
+bumping either on an upgrade is how you silently change the semantics of things
+like default database versions.
+
+Two inputs track something other than a release branch and so may need their own
+attention: `noctalia-greeter`, whose module is unstable-only until it reaches
+stable, and `nono`, which nixpkgs lags behind.
+
 ## Per-project dev environments
 
 System-wide toolchains come from `my.devtools.languages`. For a project that

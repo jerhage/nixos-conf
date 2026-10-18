@@ -120,7 +120,9 @@ profiles see [reference.md](reference.md); for restoring data see
   `nix.registry.nixpkgs.flake` points `nix shell nixpkgs#foo`, `nix run` and
   `,` at the flake input, and `nix.nixPath` keeps `<nixpkgs>` working with
   channels gone. The trade is that `nix shell` cannot hand you a package newer
-  than the system until `nix flake update`.
+  than the system until `nix flake update`. See
+  [reference.md](reference.md#updating) for the update process and for moving
+  to a new nixpkgs release.
 - `nix fmt` formats every `.nix` file in the repo via `nixfmt-tree`. Run it
   after changes. Passing a directory to `nixfmt` directly is deprecated, so
   format single files as `nixfmt <file>` or use `nix fmt` for the tree.

@@ -7,8 +7,8 @@ The repo is checked out at `~/nixos-conf`, with no symlink indirection.
 
 Further docs:
 
-- [docs/reference.md](docs/reference.md) for layout, profiles and the VM,
-  dev-shell and dotfile workflows
+- [docs/reference.md](docs/reference.md) for layout, profiles, updating, and
+  the VM, dev-shell and dotfile workflows
 - [docs/vm-workflow.md](docs/vm-workflow.md) for writing a host before the
   machine exists
 - [docs/options.md](docs/options.md) for what each `my.*` option does

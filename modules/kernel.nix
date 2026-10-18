@@ -22,11 +22,15 @@ in
     description = ''
       Which kernel branch to boot. These select a branch, not a point release.
 
-      - `default`: nixpkgs default, conservative branch (6.18.x). Also what
-        NixOS uses when unset. Receives security and bug backports
-        indefinitely, but not new hardware enablement.
-      - `latest`: newest mainline branch (7.2.x). New hardware support lands
-        here first; the proprietary nvidia driver may not build against it.
+      - `default`: nixpkgs default, the conservative branch, and what NixOS
+        uses when unset. Receives security and bug backports indefinitely,
+        but not new hardware enablement.
+      - `latest`: newest mainline branch. New hardware support lands here
+        first; the proprietary nvidia driver may not build against it.
+
+      Run `uname -r` for the booted version, or
+      `nix eval .#nixosConfigurations.<host>.config.boot.kernelPackages.kernel.version`
+      for what a branch currently resolves to.
       - `zen`, `xanmod`: patched variants, desktop-latency oriented.
       - `lts_6_12`: pinned to 6.12.x. Pinned branches are dropped from nixpkgs
         once end-of-life, so a pin eventually fails to evaluate.

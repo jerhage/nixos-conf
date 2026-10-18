@@ -71,9 +71,13 @@ in
 
       (lib.mkIf config.my.noctalia.enable {
         ".config/noctalia" = "noctalia/.config/noctalia";
-        # Noctalia writes GUI and msg changes here, and this file loads after
-        # ~/.config/noctalia, so it wins. Linked so styling is tracked.
-        ".local/state/noctalia/settings.toml" = "noctalia/.local/state/noctalia/settings.toml";
+
+        # Noctalia's GUI writes here, and this file loads after
+        # ~/.config/noctalia so it wins. Per host, because it records monitor
+        # names and resolutions: a shared copy exports one machine's display
+        # layout to every other.
+        ".local/state/noctalia/settings.toml" =
+          "noctalia/hosts/${config.networking.hostName}/settings.toml";
       })
 
       (lib.mkIf config.my.theming.enable {
@@ -87,7 +91,9 @@ in
       # Individual files, not the directory: conf/cached_layouts is a
       # regenerated cache, and fcitx5 writes these on GUI changes.
       (lib.mkIf config.my.i18n.inputMethod.enable {
-        ".config/fcitx5/profile" = "fcitx5/.config/fcitx5/profile";
+        # Not profile: fcitx5 owns it, rewrites it, and prunes any engine it
+        # cannot load at that moment, so a shared copy gets clobbered by
+        # whichever host last had an engine missing.
         ".config/fcitx5/config" = "fcitx5/.config/fcitx5/config";
         ".config/fcitx5/conf/hangul.conf" = "fcitx5/.config/fcitx5/conf/hangul.conf";
         ".config/fcitx5/conf/keyboard.conf" = "fcitx5/.config/fcitx5/conf/keyboard.conf";

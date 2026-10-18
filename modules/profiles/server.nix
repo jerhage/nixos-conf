@@ -17,9 +17,9 @@
     services.journald.extraConfig = lib.mkDefault "SystemMaxUse=1G";
 
     # Nothing should put a machine that serves to sleep.
-    systemd.sleep.extraConfig = ''
-      AllowSuspend=no
-      AllowHibernation=no
-    '';
+    systemd.sleep.settings.Sleep = {
+      AllowSuspend = "no";
+      AllowHibernation = "no";
+    };
   };
 }

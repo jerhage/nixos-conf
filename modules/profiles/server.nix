@@ -12,10 +12,6 @@
     # Weekly TRIM. Nothing else schedules it.
     services.fstrim.enable = lib.mkDefault true;
 
-    # Disk health. Reports to the journal only until there is somewhere to send
-    # a notification, and the unit fails on a disk with no SMART support.
-    services.smartd.enable = lib.mkDefault true;
-
     # Otherwise the journal grows until the disk is full, which on a host whose
     # whole job is storing things is the wrong way to run out of space.
     services.journald.extraConfig = lib.mkDefault "SystemMaxUse=1G";

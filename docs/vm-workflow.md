@@ -183,11 +183,13 @@ anywhere if you would rather not copy the file.
 
 **8. Add the key as a recipient and re-encrypt. (nucleus)**
 
-Add the age key to `.sops.yaml` under `keys` as `&cortex`, then reference that
-anchor in the `creation_rules` entry for `secrets/secrets.yaml`. Then:
+Add the age key to `.sops.yaml` under `keys` as `&cortex`, give the host its own
+`creation_rules` entry for `secrets/cortex.yaml`, and add it to the `common`
+rule if it needs the shared file. Then, for any existing file whose recipients
+changed:
 
 ```sh
-sops updatekeys secrets/secrets.yaml
+sops updatekeys secrets/common.yaml
 ```
 
 This has to run on a host that can already decrypt the file. Editing
@@ -197,16 +199,17 @@ fails to decrypt with no indication that the recipient list is the reason.
 
 **9. Turn secrets on, then push and switch again. (nucleus, then cortex)**
 
-Set `my.secrets.enable = true` in `hosts/cortex/default.nix`, commit, push, and
-on cortex:
+Set `my.secrets.enable = true` and `my.secrets.file = ../../secrets/cortex.yaml`
+in `hosts/cortex/default.nix`, commit, push, and on cortex:
 
 ```sh
 sudo nixos-rebuild switch --flake github:jerhage/nixos-conf#cortex --refresh
-sudo cat /run/secrets/test
+sudo ls -l /run/secrets/
 ```
 
-The second command is the end-to-end check that the key, the recipient list and
-the re-encryption all line up.
+The second command is the end-to-end check: every secret the host declares
+should be listed, which means the key, the recipient list and the re-encryption
+all line up.
 
 **10. Join the tailnet. (cortex)**
 

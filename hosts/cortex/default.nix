@@ -32,6 +32,7 @@
   environment.systemPackages = [ pkgs.calibre ];
 
   my.secrets.enable = true;
+  my.secrets.file = ../../secrets/cortex.yaml;
 
   # Until the dotfiles repo is provisioned here, the links would dangle.
   my.dotfiles.enable = false;

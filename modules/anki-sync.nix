@@ -9,7 +9,10 @@ let
 in
 {
   options.my.ankiSync = {
-    enable = lib.mkEnableOption "the Anki self-hosted sync server";
+    enable = lib.mkEnableOption ''
+      the Anki self-hosted sync server. Turns on `my.secrets.enable`, since the
+      user list comes from sops
+    '';
 
     port = lib.mkOption {
       type = lib.types.port;
@@ -28,6 +31,9 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    # Not optional: without it nothing sets defaultSopsFile.
+    my.secrets.enable = true;
+
     # systemd reads EnvironmentFile as root before dropping to DynamicUser.
     sops.secrets.anki-sync-users.mode = "0400";
 

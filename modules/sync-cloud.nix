@@ -77,6 +77,9 @@ in
     (lib.mkIf (cfg.cloud != { }) {
       environment.systemPackages = [ pkgs.rclone ];
 
+      # Not optional: without it nothing sets defaultSopsFile.
+      my.secrets.enable = true;
+
       # The config holds the oauth token and the crypt passwords, so it lives
       # in sops and is readable only by the user running the aliases.
       sops.secrets.rclone-conf = {

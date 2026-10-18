@@ -1,9 +1,18 @@
 # Secrets
 
-sops-nix, enabled per host with `my.secrets.enable`. Encrypted values live in
-`secrets/secrets.yaml`, committed to this repo. Who may decrypt it is listed in
-`.sops.yaml`, also committed. Both are safe to commit: the ciphertext is useless
-without a private key, and `.sops.yaml` holds public keys only.
+sops-nix, enabled per host with `my.secrets.enable`. Encrypted values live
+under `secrets/`, one file per host, committed to this repo. Who may decrypt
+each file is listed in `.sops.yaml`, also committed. Both are safe to commit:
+the ciphertext is useless without a private key, and `.sops.yaml` holds public
+keys only.
+
+One file per host on purpose. A single file encrypted to every host means any
+host's ssh key decrypts all of it offline, whether or not that host uses the
+secret, so a stolen laptop would yield the restic password and the Dropbox
+token. `secrets/cortex.yaml` is readable by jh and cortex only;
+`secrets/common.yaml` exists for anything genuinely shared. Each host names its
+own file with `my.secrets.file`, and a host that sets none gets the sops CLI
+tooling and decrypts nothing.
 
 Every command below says which machine it runs on, because several of them only
 work on a host that can already decrypt.
@@ -39,7 +48,7 @@ Three things. Losing any of them means losing access to data, not just
 convenience.
 
 **`~/.config/sops/age/keys.txt`**, the personal age key. If every host is lost
-at once and this key is gone, `secrets/secrets.yaml` is permanently unreadable
+at once and this key is gone, everything under `secrets/` is permanently unreadable
 and so is everything encrypted with the values inside it. A single surviving
 host also works as a recovery path, which is why both nucleus and cortex are
 recipients, but a key in 1Password is the only route that survives all hosts
@@ -60,19 +69,28 @@ not live only in sops, because sops is what you lose first.
 
 ## Secrets in use
 
-| Name              | Declared in            | Mode   | Owner      |
-| ----------------- | ---------------------- | ------ | ---------- |
-| `restic-password` | `modules/backup.nix`   | `0400` | root       |
-| `rclone-conf`     | `modules/sync-cloud.nix` | `0400` | `my.user`  |
-| `anki-sync-users` | `modules/anki-sync.nix`  | `0400` | root       |
-| `test`            | `modules/secrets.nix`  | `0400` | root       |
+| Name              | Declared in              | In file               | Mode   | Owner     |
+| ----------------- | ------------------------ | --------------------- | ------ | --------- |
+| `restic-password` | `modules/backup.nix`     | `secrets/cortex.yaml` | `0400` | root      |
+| `rclone-conf`     | `modules/sync-cloud.nix` | `secrets/cortex.yaml` | `0400` | `my.user` |
+| `anki-sync-users` | `modules/anki-sync.nix`  | `secrets/cortex.yaml` | `0400` | root      |
 
-`test` exists only to prove the pipeline end to end and can be deleted once the
-others are in place.
+A host decrypts only the secrets it declares. `my.secrets.enable` on its own
+decrypts nothing: a secret appears under `/run/secrets/<name>` because a module
+asked for it.
 
-A host decrypts only the secrets it declares. Enabling `my.secrets.enable`
-alone decrypts nothing but `test`; a secret appears under `/run/secrets/<name>`
-because a module asked for it.
+The reverse also holds, which is easy to forget. Each of those three modules
+sets `my.secrets.enable = true` itself, because none of them can work without
+it. So `my.backup.enable = true` on a host is enough to turn sops on, with no
+mention of sops in the host file. Their option descriptions say so, and to find
+out what turned it on for a given host:
+
+```sh
+nix eval --json .#nixosConfigurations.<host>.options.my.secrets.enable.files
+```
+
+That lists every file defining the option, which is the general way to answer
+"why is this on" for anything in this repo.
 
 ## Adding or editing a secret
 
@@ -80,7 +98,7 @@ On a host that can already decrypt:
 
 ```sh
 cd ~/nixos-conf
-sops secrets/secrets.yaml
+sops secrets/cortex.yaml
 ```
 
 That decrypts into your editor, and re-encrypts on save for every recipient in
@@ -148,44 +166,60 @@ anywhere.
 
 **3. Add it as a recipient. (nucleus)**
 
-In `.sops.yaml`, add the key under `keys` with an anchor, and reference that
-anchor in the `creation_rules` entry:
+In `.sops.yaml`, add the key under `keys` with an anchor, then give the host its
+own rule and add it to `common` if it needs the shared file:
 
 ```yaml
 keys:
   - &newhost age1...
 creation_rules:
-  - path_regex: secrets/secrets\.yaml$
+  - path_regex: secrets/newhost\.yaml$
+    key_groups:
+      - age:
+          - *jh
+          - *newhost
+  - path_regex: secrets/common\.yaml$
     key_groups:
       - age:
           - *jh
           - *nucleus
+          - *cortex
           - *newhost
 ```
+
+Keep `*jh` on every rule. That is what lets you edit any host's file from your
+workstation, and it is the recovery path if a host dies.
 
 **4. Re-encrypt for the new recipient list. (a host that can decrypt)**
 
 ```sh
-sops updatekeys secrets/secrets.yaml
+sops updatekeys secrets/common.yaml
 ```
 
+Run it for every existing file whose recipient list changed. A brand new
+`secrets/newhost.yaml` needs no `updatekeys`, since `sops` encrypts it to the
+matching rule when you first create it.
+
 This step is the one that gets skipped. Editing `.sops.yaml` does not touch
-existing ciphertext, so without `updatekeys` the file stays encrypted to the old
+existing ciphertext, so without `updatekeys` a file stays encrypted to the old
 recipients and the new host fails to decrypt with nothing pointing at the
 recipient list as the cause.
 
 **5. Commit both files, then enable it. (nucleus)**
 
-`.sops.yaml` and `secrets/secrets.yaml` both changed. Commit them, set
-`my.secrets.enable = true` on the new host, and switch.
+Commit `.sops.yaml` and any secrets file that changed. On the new host set
+`my.secrets.enable = true` and `my.secrets.file` to its own file, then switch.
 
 **6. Verify. (new host)**
 
 ```sh
-sudo cat /run/secrets/test
+sudo ls -l /run/secrets/
 ```
 
-If that prints, the key, the recipient list and the re-encryption all agree.
+Every secret the host declares should be listed. That directory is tmpfs and is
+populated at activation, so a name appearing there means the key, the recipient
+list and the re-encryption all agree. Listing rather than printing, so a real
+value does not end up in your scrollback.
 
 ## Reinstalling a host
 
@@ -195,11 +229,12 @@ Same as adding one. The old host key is gone, so its age key is wrong, and
 
 ## If you lose a host
 
-One host lost, others alive: nothing is at risk. The secrets file is encrypted
-to every recipient independently, so any surviving host or your personal key
-decrypts it.
+One host lost, others alive: nothing is at risk, because `*jh` is a recipient
+on every rule. Revoke the dead host by deleting its anchor and rule from
+`.sops.yaml` and running `sops updatekeys` on any file it could read. Its key is
+on a disk someone else may now hold, so that revocation is the point.
 
 All hosts lost: the personal age key from 1Password is the only way back into
-`secrets/secrets.yaml`, and the restic password and rclone crypt credentials
-from 1Password are the only way into the backups and the Dropbox copy. That is
-the case the three 1Password entries exist for.
+`secrets/`, and the restic password and rclone crypt credentials from 1Password
+are the only way into the backups and the Dropbox copy. That is the case the
+three 1Password entries exist for.

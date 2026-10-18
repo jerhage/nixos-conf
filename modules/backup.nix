@@ -9,7 +9,10 @@ let
 in
 {
   options.my.backup = {
-    enable = lib.mkEnableOption "restic snapshots to an rclone remote";
+    enable = lib.mkEnableOption ''
+      restic snapshots to an rclone remote. Turns on `my.secrets.enable`, since
+      the repository password and the rclone config both come from sops
+    '';
 
     repository = lib.mkOption {
       type = lib.types.str;
@@ -47,6 +50,9 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    # Not optional: without it nothing sets defaultSopsFile.
+    my.secrets.enable = true;
+
     sops.secrets.restic-password.mode = "0400";
 
     services.restic.backups.local = {

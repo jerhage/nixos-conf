@@ -1,13 +1,17 @@
 # Who can decrypt what. Public keys only -- safe to commit.
 #
+# One file per host, so a host's key opens only what that host needed. common
+# is for anything genuinely shared; it has no rule members beyond the hosts
+# that need it.
+#
 # Regenerate the host key line after reinstalling a host:
 #   ssh-to-age < /etc/ssh/ssh_host_ed25519_key.pub
 # Your own key, generated once and never committed:
 #   age-keygen -o ~/.config/sops/age/keys.txt
 #   age-keygen -y ~/.config/sops/age/keys.txt
 #
-# After editing this file, re-encrypt existing secrets for the new recipients:
-#   sops updatekeys secrets/secrets.yaml
+# After editing this file, re-encrypt for the new recipients:
+#   sops updatekeys secrets/<file>.yaml
 
 keys:
   - &jh age1axrde7w6zzy4v6eec3aazxx4hrmadrvcfqgrcpstjsd6kz05853qhey8js
@@ -15,7 +19,19 @@ keys:
   - &cortex age1njyp6vejfa8f7u2yl4rm860pz55fxvn5gd5h8re6m8s4zcs4jptq4vccsh
 
 creation_rules:
-  - path_regex: secrets/secrets\.yaml$
+  - path_regex: secrets/cortex\.yaml$
+    key_groups:
+      - age:
+          - *jh
+          - *cortex
+
+  - path_regex: secrets/nucleus\.yaml$
+    key_groups:
+      - age:
+          - *jh
+          - *nucleus
+
+  - path_regex: secrets/common\.yaml$
     key_groups:
       - age:
           - *jh

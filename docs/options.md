@@ -69,6 +69,10 @@ profiles see [reference.md](reference.md); for restoring data see
 - `my.tailscale.tailnet` holds the MagicDNS suffix so a config can name another
   host on the tailnet -- `"https://nucleus.${config.my.tailscale.tailnet}"` --
   and `my.tailscale.fqdn` is this host's own name.
+- `my.backup`, `my.ankiSync` and `my.sync.cloud` each set
+  `my.secrets.enable = true`, since all three read a secret from sops and none
+  can run without it. Enabling any of them turns sops on without the host file
+  saying so.
 - `my.secrets.enable` turns on sops-nix. A host decrypts with an age key derived
   from its ssh host key, so reinstalling one means re-running `ssh-to-age`, adding
   it to `.sops.yaml` and `sops updatekeys`. Hosts only decrypt the secrets they

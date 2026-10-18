@@ -73,6 +73,14 @@ profiles see [reference.md](reference.md); for restoring data see
   `my.secrets.enable = true`, since all three read a secret from sops and none
   can run without it. Enabling any of them turns sops on without the host file
   saying so.
+- `my.dotfiles.links` is keyed on the feature that owns each path, all of it in
+  `modules/dotfiles.nix`, so enabling `my.niri` brings `.config/niri` with it.
+  It lives there rather than in `niri.nix` to keep the feature modules
+  importable on their own. A host sets an entry to null to take a path back.
+  See [reference.md](reference.md#dotfiles).
+- `my.terminals.enable` installs ghostty and wezterm. They get a module rather
+  than a line in a host's package list because their configs are tracked, and
+  the dotfile link map keys on this option.
 - `my.secrets.enable` turns on sops-nix. A host decrypts with an age key derived
   from its ssh host key, so reinstalling one means re-running `ssh-to-age`, adding
   it to `.sops.yaml` and `sops updatekeys`. Hosts only decrypt the secrets they

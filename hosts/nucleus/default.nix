@@ -72,43 +72,6 @@
     variant = "";
   };
 
-  # Live symlinks into the self-managed dotfiles repo. Edits there take
-  # effect without a rebuild.
-  my.dotfiles = {
-    links = {
-      # shell
-      ".bashrc" = "bash/.bashrc";
-      ".profile" = "bash/.profile";
-
-      # app configs
-      ".config/mpv/mpv.conf" = "mpv/.config/mpv/mpv.conf";
-      ".config/niri" = "niri/.config/niri";
-      ".config/noctalia" = "noctalia/.config/noctalia";
-      # Noctalia writes GUI/msg changes here, and this file loads AFTER
-      # ~/.config/noctalia, so it wins. Linked so styling is tracked.
-      ".local/state/noctalia/settings.toml" = "noctalia/.local/state/noctalia/settings.toml";
-      ".config/gtk-3.0/settings.ini" = "gtk/.config/gtk-3.0/settings.ini";
-      ".config/gtk-4.0/settings.ini" = "gtk/.config/gtk-4.0/settings.ini";
-      ".gtkrc-2.0" = "gtk/.gtkrc-2.0";
-
-      # migrated off stow
-      ".config/ghostty" = "ghostty/.config/ghostty";
-      # Individual files, not the directory: conf/cached_layouts is a
-      # regenerated cache, and fcitx5 writes these on GUI changes.
-      ".config/fcitx5/profile" = "fcitx5/.config/fcitx5/profile";
-      ".config/fcitx5/config" = "fcitx5/.config/fcitx5/config";
-      ".config/fcitx5/conf/hangul.conf" = "fcitx5/.config/fcitx5/conf/hangul.conf";
-      ".config/fcitx5/conf/keyboard.conf" = "fcitx5/.config/fcitx5/conf/keyboard.conf";
-      ".config/fcitx5/conf/notifications.conf" = "fcitx5/.config/fcitx5/conf/notifications.conf";
-      ".config/nono/profiles" = "nono/.config/nono/profiles";
-      ".config/nvim" = "nvim/.config/nvim";
-      ".config/starship" = "starship/.config/starship";
-      ".config/starship.toml" = "starship/.config/starship.toml";
-      ".config/tmux" = "tmux/.config/tmux";
-      ".config/wezterm" = "wezterm/.config/wezterm";
-      ".config/yazi" = "yazi/.config/yazi";
-    };
-  };
   my.vm.shareDotfiles = false;
 
   my.sync.pulls.pictures = {
@@ -187,7 +150,6 @@
     discord
     dropbox
     gcolor3
-    ghostty
     imv
     kdePackages.kate
     obs-studio
@@ -195,7 +157,6 @@
     playerctl
     qbittorrent
     spotify
-    wezterm
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.twilight
 
     # accounting
@@ -203,8 +164,6 @@
     fava
 
     claude-code
-
-    (pkgs.callPackage ../../pkgs/nvim-desktop-item { })
 
     (pkgs.writeShellApplication {
       name = "ns";
@@ -216,15 +175,6 @@
       text = builtins.readFile "${pkgs.nix-search-tv.src}/nixpkgs.sh";
     })
   ];
-
-  # Otherwise whatever registered last wins; calibre was claiming text/plain.
-  xdg.mime.defaultApplications = {
-    "text/plain" = "nvim-ghostty.desktop";
-    "text/markdown" = "nvim-ghostty.desktop";
-    "text/csv" = "nvim-ghostty.desktop";
-    "application/json" = "nvim-ghostty.desktop";
-    "application/x-shellscript" = "nvim-ghostty.desktop";
-  };
 
   system.stateVersion = "25.11";
 }

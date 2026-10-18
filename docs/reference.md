@@ -85,21 +85,39 @@ shell.
 ## Dotfiles
 
 Application configs live in a separate dotfiles repo, each in its own native
-format. Nix does not own their contents -- it only declares the symlinks, via
-`my.dotfiles.links` in the host file:
+format. Nix does not own their contents, only the symlinks, declared through
+`my.dotfiles.links`.
+
+`modules/dotfiles.nix` holds the whole map, keyed on the feature that owns each
+path, so enabling a module brings its config with it:
 
 ```nix
-my.dotfiles.links = {
-  ".bashrc" = "bash/.bashrc";
-  ".config/nvim" = "nvim/.config/nvim";
-};
+my.dotfiles.links = lib.mkMerge [
+  (lib.mkIf config.my.niri.enable { ".config/niri" = "niri/.config/niri"; })
+  (lib.mkIf config.my.i18n.inputMethod.enable { ... })
+];
 ```
+
+Deliberately here and not in `niri.nix`. A feature module that referenced
+`my.dotfiles.links` could not be imported on its own, since the option would
+not exist in someone else's configuration, and it would encode this repo's
+dotfiles layout. `niri.nix`, `mpv.nix`, `cli.nix`, `shell.nix`, `theming.nix`
+and `devtools.nix` reference no `my.*` option but their own, so any of them can
+be dropped into another config. `dotfiles.nix` is the one module nobody else
+would want, which makes it the right place to keep the coupling.
+
+The cost is that adding a feature with config means touching two files. The
+benefit, besides portability, is one place to read what claims which path.
+
+No host declares any links. An application whose config is tracked gets a
+module so the map has something to key on, which is why `my.terminals` exists
+for ghostty and wezterm rather than leaving them in a host's package list.
 
 Each entry becomes a systemd-tmpfiles `L+` rule, applied on every switch and
 again at login. The symlink points at the real file in the repo, so edits take
 effect immediately with no rebuild. It is a declarative `stow`.
 
-Three caveats:
+Four caveats:
 
 - Removing an entry does not remove the symlink it already created. Prune by
   hand.
@@ -108,3 +126,18 @@ Three caveats:
 - Do not point `stow` at a path that `my.dotfiles.links` also manages. Both
   create symlinks and neither knows about the other, so whichever ran last
   wins and the result depends on ordering. Pick one mechanism per path.
+- A module contributes its links whether or not `my.dotfiles.enable` is on.
+  That is harmless, since nothing reads them when it is off, which is how
+  cortex enables `my.cli` without acquiring a dangling `.config/nvim`.
+- A host cannot delete an entry a module declared, because the module system
+  has no way to remove an attribute. Set it to null instead:
+
+  ```nix
+  my.dotfiles.links.".config/niri" = null;
+  ```
+
+  The path is then left alone rather than linked. This is for taking a path
+  back while experimenting, when you want a hand written config that survives
+  a switch, since the `L+` rule would otherwise replace it. It is not the way
+  to give a host a different config: that belongs in the dotfiles repo, keyed
+  on hostname. Expect zero of these in steady state.

@@ -36,6 +36,7 @@ in
 
       # desktop applications
       my.mpv.enable = lib.mkDefault true;
+      my.terminals.enable = lib.mkDefault true;
 
       # Typing CJK needs a graphical session; base only sets locales.
       my.i18n.inputMethod.enable = lib.mkDefault true;

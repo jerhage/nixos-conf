@@ -36,6 +36,7 @@
     ./backup.nix
     ./tailscale.nix
     ./ssh.nix
+    ./terminals.nix
     ./theming.nix
     ./keyboard.nix
     ./virtualisation.nix

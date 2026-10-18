@@ -13,6 +13,7 @@ let
     discord
     dropbox
     gcolor3
+    google-chrome
     imv
     kdePackages.kate
     obs-studio

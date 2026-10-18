@@ -1,7 +1,6 @@
 {
   config,
   pkgs,
-  inputs,
   ...
 }:
 {
@@ -72,11 +71,6 @@
     extraGroups = [
       "networkmanager"
       "wireshark"
-    ];
-
-    packages = with pkgs; [
-      # chromium
-      google-chrome
     ];
   };
 

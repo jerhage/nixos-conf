@@ -19,6 +19,13 @@
     lan = "10.10.1.5";
   };
 
+  helix = {
+    # Reserved on the homelab DHCP server, so it is stable enough to be the
+    # fallback. Its ssh server still listens on the tailnet only.
+    lan = "10.10.1.191";
+    userKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKfYPIQhcN04NPvOImoZBQ4XYjdyFLl5iIiCCeE98u2t jh@helix";
+  };
+
   mbp = {
     lan = "10.10.1.115";
     tailnet = "jeremys-macbook-pro";

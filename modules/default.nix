@@ -6,6 +6,7 @@
     ./git.nix
     ./kernel.nix
     ./profiles
+    ./proxy.nix
     ./secrets.nix
     ./vm.nix
 
@@ -34,7 +35,6 @@
     ./shell.nix
     ./sync.nix
     ./sync-cloud.nix
-    ./server.nix
     ./anki-sync.nix
     ./backup.nix
     ./tailscale.nix

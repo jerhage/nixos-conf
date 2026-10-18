@@ -5,7 +5,7 @@
   my.user = "jh";
 
   # Headless: locales but no input method, no desktop.
-  my.profiles.base.enable = true;
+  my.profiles.server.enable = true;
   my.i18n.languages = [
     "korean"
     "japanese"
@@ -20,8 +20,6 @@
     "eno1"
     "tailscale0"
   ];
-
-  my.ssh.server.enable = true;
 
   # Bulk metadata editing means running desktop calibre here over ssh -X.
   services.openssh.settings.X11Forwarding = true;
@@ -50,14 +48,14 @@
     "/var/lib/anki-sync-server" # collections exist nowhere else
   ];
 
-  my.server.enable = true;
-  my.server.tailscaleServe = true;
-  my.server.sites.books.port = 8083;
-  my.server.sites.books.cors = [
+  my.proxy.enable = true;
+  my.proxy.tailscaleServe = true;
+  my.proxy.sites.books.port = 8083;
+  my.proxy.sites.books.cors = [
     "https://reader.gongbu.me"
     "http://localhost:5173"
   ];
-  my.server.sites.anki.port = 8080;
+  my.proxy.sites.anki.port = 8080;
 
   # Clients point at https://<host>/anki/ -- the trailing slash matters.
   # No app-side prefix config: it serves an API and generates no links.

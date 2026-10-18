@@ -7,6 +7,8 @@
 #       workstation  graphical, stays put
 #       laptop       graphical, runs on battery
 #
+#     server         headless, runs services
+#
 #   personal         my own habits and accounts
 {
   imports = [
@@ -14,6 +16,7 @@
     ./graphical.nix
     ./workstation.nix
     ./laptop.nix
+    ./server.nix
     ./personal.nix
   ];
 }

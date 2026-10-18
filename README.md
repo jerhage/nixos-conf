@@ -133,5 +133,5 @@ A rebuilt host needs two things by hand. Neither is in the flake.
   to come from a backup. On a host with `my.backup`:
   `restic-local restore latest --target /`.
 
-`tailscale serve` used to be a third. `my.server.tailscaleServe` now does it,
+`tailscale serve` used to be a third. `my.proxy.tailscaleServe` now does it,
 because a reinstall dropped it silently and nothing pointed at the cause.

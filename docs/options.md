@@ -78,7 +78,7 @@ profiles see [reference.md](reference.md); for restoring data see
 - `my.sync.cloud.<name>` syncs against an rclone remote. `push-<name>` mirrors
   and deletes; `pull-<name>` only merges, because a restore should never remove
   local files.
-- `my.server.sites.<name>` publishes a service through Caddy. `routing = "path"`
+- `my.proxy.sites.<name>` publishes a service through Caddy. `routing = "path"`
   serves everything on one origin behind a single `tailscale serve`, and sets
   the prefix headers apps need; `routing = "host"` switches to subdomains later
   without touching the service definitions. `cors = [ "https://app.example" ]`

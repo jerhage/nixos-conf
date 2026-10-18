@@ -14,7 +14,7 @@ This is the long version of the short section in
 Three things, roughly in order of value.
 
 **Fast iteration on option shapes.** Most of the work in adding a host is not
-the host file, it is the modules it needs. `my.server`, `my.ankiSync` and
+the host file, it is the modules it needs. `my.proxy`, `my.ankiSync` and
 `my.backup` were all designed against a guest, where a bad option name costs a
 rebuild and a reboot rather than a trip to another room.
 

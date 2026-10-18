@@ -5,7 +5,7 @@
   ...
 }:
 let
-  cfg = config.my.server;
+  cfg = config.my.proxy;
 
   # Apps served under a prefix need to be told what it is, or they emit
   # absolute links that escape the prefix. X-Script-Name is the werkzeug
@@ -98,7 +98,7 @@ let
       '';
 in
 {
-  options.my.server = {
+  options.my.proxy = {
     enable = lib.mkEnableOption "Caddy fronting local services";
 
     routing = lib.mkOption {
@@ -192,11 +192,11 @@ in
     assertions = [
       {
         assertion = cfg.routing == "path" -> cfg.domain == "";
-        message = "my.server.domain is only meaningful when routing is \"host\".";
+        message = "my.proxy.domain is only meaningful when routing is \"host\".";
       }
       {
         assertion = cfg.routing == "host" -> cfg.domain != "";
-        message = "my.server.routing = \"host\" needs my.server.domain.";
+        message = "my.proxy.routing = \"host\" needs my.proxy.domain.";
       }
     ];
 

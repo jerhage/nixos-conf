@@ -11,7 +11,7 @@ Option-by-option notes are in [options.md](options.md), restoring data in
 | `flake.nix`            | Discovers hosts via `readDir ./hosts`. Never edited to add a host.                 |
 | `modules/`             | Shared NixOS modules, each behind a `my.<name>.enable` option.                     |
 | `modules/default.nix`  | Imports every module. Every host gets all of them; they do nothing unless enabled. |
-| `modules/profiles.nix` | Bundles modules for a kind of machine (`base`, `workstation`).                     |
+| `modules/profiles/`    | One file per profile. Bundles modules for a kind of machine, or for whose it is.    |
 | `hosts/<name>/`        | Per-machine config and its `hardware-configuration.nix`.                           |
 | `pkgs/<name>/`         | Packages defined here rather than in nixpkgs, pulled in with `callPackage`.        |
 | `templates/host/`      | Starting point for a new host.                                                     |
@@ -20,16 +20,37 @@ Always on regardless of profile, having no enable option of their own:
 `git.nix`, `greeter.nix`, `kernel.nix`, `nix.nix`, `user.nix`, plus `sync.nix`,
 `sync-cloud.nix` and `vm.nix`, which are inert until something is configured.
 They are all inert until configured: `greeter.nix` defaults `backend` to
-`none`, and `my.profiles.workstation` is what sets `ly`.
+`none`, and `my.profiles.graphical` is what sets `ly`.
 
 ## Profiles
 
-`my.profiles.base` is the interactive-but-headless set: command-line tools, bash
-configuration, ssh agent, dotfile links, networking and input methods.
-`my.profiles.workstation` turns on `base` plus the graphical session: compositor,
-desktop shell, portals, theming, audio, bluetooth, fonts, input device rules,
-power management and mpv. A host normally sets one profile and then only its
-hardware and machine-specific bits.
+Two independent axes, combined per host rather than nested: what kind of
+machine it is, and whose it is.
+
+```
+base             interactive, no graphics: cli, shell, ssh agent, dotfile
+                 links, networking, locales
+  graphical      the session: compositor, desktop shell, portals, theming,
+                 audio, bluetooth, fonts, input rules, apps, mpv, terminals,
+                 the input method, a greeter
+    workstation  graphical, machine stays put: performance power profile
+    laptop       graphical, runs on battery: power-saver, zram
+
+personal         my habits and accounts: CJK input languages, 1Password, fzf
+                 history, trayscale, the devtools toolchain list
+```
+
+A host names one from each axis:
+
+```nix
+my.profiles.workstation.enable = true;   # nucleus
+my.profiles.personal.enable = true;
+```
+
+The axes are separate because a work laptop would be portable without being
+mine, which a single hierarchy cannot express: it would take `laptop` and a
+`work` profile instead of `personal`, differing in git identity and which apps
+it excludes. `cortex` takes `base` alone and neither axis.
 
 Everything a profile sets uses `lib.mkDefault`, so a host can override any of it
 with a plain assignment.

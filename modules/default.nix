@@ -5,7 +5,7 @@
     ./user.nix
     ./git.nix
     ./kernel.nix
-    ./profiles.nix
+    ./profiles
     ./secrets.nix
     ./vm.nix
 

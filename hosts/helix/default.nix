@@ -4,7 +4,8 @@
 
   my.user = "jh";
 
-  my.profiles.workstation.enable = true;
+  my.profiles.laptop.enable = true;
+  my.profiles.personal.enable = true;
 
   my.tailscale.enable = true;
   my.tailscale.tailnet = "tail5e24fe.ts.net";
@@ -15,8 +16,7 @@
 
   my.devtools.enable = true;
 
-  # Until the dotfiles repo is cloned here, every link would dangle.
-  my.dotfiles.enable = false;
+  my.greeter.backend = "noctalia";
 
   users.users.${config.my.user} = {
     description = "Main User";

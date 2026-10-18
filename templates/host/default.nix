@@ -10,8 +10,11 @@
   # Required. No default: the build fails if this is missing.
   my.user = "CHANGEME";
 
-  # Pick the bundles this machine wants.
+  # One from each axis: what kind of machine, and whose.
+  # workstation (stays put) or laptop (battery), and personal for my own
+  # habits and accounts. base alone for a headless host.
   my.profiles.workstation.enable = true;
+  my.profiles.personal.enable = true;
 
   # Which greeter logs you in. One of: ly, noctalia, none.
   # workstation sets "ly"; "noctalia" needs the noctalia-greeter flake input.

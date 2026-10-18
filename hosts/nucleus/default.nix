@@ -9,13 +9,13 @@
 
   my.user = "jh";
   my.profiles.workstation.enable = true;
+  my.profiles.personal.enable = true;
 
   # machine-specific capabilities
   my.nvidia.enable = true;
   my.zram.enable = true;
   my.gaming.enable = true;
   my.virtualisation.enable = true;
-  my.onepassword.enable = true;
   my.ssh.server.enable = true;
   my.ssh.server.interfaces = [
     "eno1"
@@ -24,31 +24,12 @@
   my.devtools.enable = true;
   my.secrets.enable = true;
   my.devtools.agentSandbox = true;
-  my.devtools.languages = [
-    "c"
-    "deno"
-    "elixir"
-    "go"
-    "nix"
-    "node"
-    "rust"
-  ];
-  my.i18n.languages = [
-    "korean"
-    "japanese"
-  ];
   my.tailscale.enable = true;
-  my.tailscale.gui = true;
-
-  my.shell.history = "fzf";
 
   # Without this, Tailscale owned /etc/resolv.conf alone and DNS failed at
   # login until the link was toggled -- see modules/dns.nix.
   my.dns.systemdResolved = true;
   my.greeter.backend = "noctalia";
-
-  # Desktop on mains power: no reason to throttle.
-  my.power.profile = "performance";
 
   # Firmware updates for LVFS-supported devices. Not this board's BIOS.
   services.fwupd.enable = true;

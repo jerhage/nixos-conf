@@ -1,6 +1,6 @@
 # The machines, and the few facts other machines need about them. Adding one is
-# an entry here plus naming it in `my.ssh.server.authorize` on whichever hosts
-# should accept its key.
+# an entry here and nothing else: every host with an ssh server accepts the
+# keys listed here, and generates a client alias for each of the others.
 #
 # lan      address on the LAN, the fallback when the tailnet is down
 # tailnet  MagicDNS name, only when it differs from the alias

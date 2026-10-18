@@ -17,7 +17,6 @@
   my.virtualisation.enable = true;
   my.onepassword.enable = true;
   my.ssh.server.enable = true;
-  my.ssh.server.authorize = [ "mbp" ];
   my.ssh.server.interfaces = [
     "eno1"
     "tailscale0"

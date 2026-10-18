@@ -22,7 +22,6 @@
   ];
 
   my.ssh.server.enable = true;
-  my.ssh.server.authorize = [ "nucleus" ];
 
   # Bulk metadata editing means running desktop calibre here over ssh -X.
   services.openssh.settings.X11Forwarding = true;

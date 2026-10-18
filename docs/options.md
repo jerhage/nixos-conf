@@ -54,11 +54,14 @@ profiles see [reference.md](reference.md); for restoring data see
   user connects with. The entries are in `hosts/fleet.nix`, a file that is only
   the list; `modules/fleet.nix` declares their shape. `my.ssh.agent` generates
   a `Host` block per peer from it, skipping the local host, and
-  `my.ssh.server.authorize = [ "nucleus" ]` names whose keys a server accepts,
-  so adding a laptop is one entry plus one name per server rather than a key
-  pasted into every host. Naming a machine with no `userKey` fails the build.
-  Explicit lists while the fleet is small; `modules/fleet.nix` notes the roles
-  variant for when that gets tedious.
+  `my.ssh.server.authorize` defaults to every machine that has a `userKey`,
+  minus the local host, so adding a laptop to `hosts/fleet.nix` is the only
+  edit: every host accepts it on the next switch, and it accepts them. A
+  machine with no `userKey`, like cortex, is authorized nowhere, which is what
+  stops a server from being able to ssh out. Set the option explicitly to
+  narrow a host. `my.ssh.identityFile` is the private key the generated blocks
+  offer, `~/.ssh/id_ed25519_nix` on every machine, which is not the ssh default
+  name.
 - Each generated `Host` block is preceded by a `Match host ... exec` probe when
   the machine has both a tailnet name and a LAN address, so the tailnet is
   preferred and the LAN is the fallback. It probes TCP rather than resolving,

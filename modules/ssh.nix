@@ -22,7 +22,7 @@ let
       Host ${name}
         HostName ${if m.lan != null then m.lan else tailnetName}
         User ${config.my.user}
-        IdentityFile ~/.ssh/id_ed25519_nix
+        IdentityFile ${cfg.identityFile}
         IdentitiesOnly yes
         HostKeyAlias ${name}
 
@@ -33,17 +33,30 @@ in
     agent.enable = lib.mkEnableOption "ssh agent for interactive sessions";
     server.enable = lib.mkEnableOption "OpenSSH server (key-only)";
 
+    identityFile = lib.mkOption {
+      type = lib.types.str;
+      default = "~/.ssh/id_ed25519_nix";
+      description = ''
+        Private key the generated host blocks offer. Every machine keeps its
+        own at this path and publishes the public half in `hosts/fleet.nix`,
+        so the path is shared and the key is not. Not the ssh default name,
+        hence an option rather than a hardcoded path.
+      '';
+    };
+
     server.authorize = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      default = [ ];
-      example = [
-        "nucleus"
-        "mbp"
-      ];
+      default = lib.attrNames (lib.filterAttrs (_: m: m.userKey != null) peers);
+      defaultText = lib.literalExpression "every my.fleet machine with a userKey, except this host";
+      example = [ "mbp" ];
       description = ''
-        Names in `my.fleet` whose `userKey` may log in here. Explicit rather
-        than role-based while the fleet is small; see `my.fleet` for the note
-        on roles.
+        Names in `my.fleet` whose `userKey` may log in here. Defaults to every
+        machine that has one, so adding a laptop to `hosts/fleet.nix` grants it
+        access everywhere on the next switch.
+
+        A machine with no `userKey` is never authorized anywhere, which is why
+        a server cannot ssh out: it has nothing to log in with. Set this
+        explicitly to narrow a host.
       '';
     };
 

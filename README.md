@@ -95,6 +95,28 @@ cortex was first brought up.
 
 The host directory name _is_ the hostname; `flake.nix` contains no hostnames.
 
+### Giving it ssh access
+
+Only for a machine that logs **in to** others. A machine that is only ever
+logged in to, like cortex, skips this and leaves `userKey` unset, which is what
+keeps a server unable to ssh outward.
+
+1. On the new machine: `ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519_nix`, with a
+   passphrase. `my.ssh.agent` sets `AddKeysToAgent yes`, so it is one prompt
+   per session.
+2. Add it to `hosts/fleet.nix`: its `lan` address, the contents of
+   `~/.ssh/id_ed25519_nix.pub` as `userKey`, and `tailnet` only if its MagicDNS
+   name differs from the alias.
+3. Commit. Flakes ignore untracked files.
+4. Switch **the other hosts too**. Their `authorized_keys` are built from
+   `hosts/fleet.nix` at eval time, so until each one rebuilds, the new machine
+   still cannot log in.
+5. Switch the new machine, which gives it an alias for each of the others.
+
+The first switch has to run on the machine itself, from the pushed flake. Step
+4 is what makes it accept a pushed closure, so `os-push <host>` only works
+afterwards.
+
 ### Steps the config cannot do for you
 
 A rebuilt host needs two things by hand. Neither is in the flake.
@@ -102,6 +124,10 @@ A rebuilt host needs two things by hand. Neither is in the flake.
 - `sudo tailscale up` joins the tailnet. Identity lives in
   `/var/lib/tailscale`. Until this runs, `tailscale-serve.service` retries and
   fails, so services are unreachable even though everything else is up.
+- An ssh key for the user, if this machine logs in to others:
+  `ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519_nix`. Put the public half in
+  `hosts/fleet.nix` and every other host accepts it on its next switch. A
+  machine that is only ever logged in to needs none.
 - Restoring data: service state and anything under `/var/lib` the config does
   not generate. It sets ownership and permissions, but the files themselves have
   to come from a backup. On a host with `my.backup`:

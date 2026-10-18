@@ -17,6 +17,7 @@
   my.virtualisation.enable = true;
   my.onepassword.enable = true;
   my.ssh.server.enable = true;
+  my.ssh.server.authorize = [ "mbp" ];
   my.ssh.server.interfaces = [
     "eno1"
     "tailscale0"
@@ -86,29 +87,6 @@
   #   };
   # };
 
-  # Host aliases live here rather than ~/.ssh/config so they stay per-host Nix
-  # config. modules/ssh.nix adds a "Host *" block above this one.
-  programs.ssh.extraConfig = ''
-    # Prefer the tailnet, fall back to the LAN. Probes TCP rather than
-    # resolving, because tailscaled answers MagicDNS while offline.
-    Match host mbp exec "timeout 2 bash -c 'exec 3<>/dev/tcp/jeremys-macbook-pro/22' 2>/dev/null"
-      HostName jeremys-macbook-pro
-
-    Host mbp
-      HostName 10.10.1.115
-      User jh
-      IdentityFile ~/.ssh/id_ed25519_nix
-      IdentitiesOnly yes
-      HostKeyAlias mbp
-
-    Host cortex
-      HostName 10.10.1.5
-      User jh
-      IdentityFile ~/.ssh/id_ed25519_nix
-      IdentitiesOnly yes
-      HostKeyAlias cortex
-  '';
-
   users.users.${config.my.user} = {
     description = "Main User";
     extraGroups = [
@@ -119,9 +97,6 @@
     packages = with pkgs; [
       # chromium
       google-chrome
-    ];
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMKmSb03l6MOhGnJzit57QfPMBlashhIfzVRk/KXx49U personal-mb"
     ];
   };
 

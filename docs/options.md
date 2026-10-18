@@ -49,6 +49,21 @@ profiles see [reference.md](reference.md); for restoring data see
   are hostnames and ports, so a deny there is bypassed by connecting to a bare
   address. The ranges are enforced by systemd `IPAddressDeny`, which only
   attaches for system units, so the launcher needs `sudo` and prompts once.
+- `my.fleet` holds what each machine needs to know about the others: LAN
+  address, MagicDNS name when it differs from the alias, and the public key its
+  user connects with. The entries are in `hosts/fleet.nix`, a file that is only
+  the list; `modules/fleet.nix` declares their shape. `my.ssh.agent` generates
+  a `Host` block per peer from it, skipping the local host, and
+  `my.ssh.server.authorize = [ "nucleus" ]` names whose keys a server accepts,
+  so adding a laptop is one entry plus one name per server rather than a key
+  pasted into every host. Naming a machine with no `userKey` fails the build.
+  Explicit lists while the fleet is small; `modules/fleet.nix` notes the roles
+  variant for when that gets tedious.
+- Each generated `Host` block is preceded by a `Match host ... exec` probe when
+  the machine has both a tailnet name and a LAN address, so the tailnet is
+  preferred and the LAN is the fallback. It probes TCP rather than resolving,
+  because tailscaled answers MagicDNS even for a peer that is unreachable. The
+  cost is a 2 second timeout per connection when the tailnet path is down.
 - `my.ssh.server.interfaces` lists the interfaces that accept SSH; port 22 is
   opened per interface rather than globally, so bringing up wifi, a VM bridge or
   a container veth does not expose sshd on it. Defaults to `[ "tailscale0" ]`,

@@ -21,11 +21,8 @@
     "tailscale0"
   ];
 
-  users.users.jh.openssh.authorizedKeys.keys = [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDgYJvoB7Z9QOIud/s1Zgho8Ssmp33uzXx8TX5DdCCQy nixos-desktop"
-  ];
-
   my.ssh.server.enable = true;
+  my.ssh.server.authorize = [ "nucleus" ];
 
   # Bulk metadata editing means running desktop calibre here over ssh -X.
   services.openssh.settings.X11Forwarding = true;

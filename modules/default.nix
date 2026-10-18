@@ -19,6 +19,7 @@
     ./dns.nix
     ./devtools.nix
     ./dotfiles.nix
+    ./fleet.nix
     ./fonts.nix
     ./gaming.nix
     ./greeter.nix

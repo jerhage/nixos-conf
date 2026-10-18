@@ -85,3 +85,39 @@ profiles see [reference.md](reference.md); for restoring data see
 - `nix fmt` formats every `.nix` file in the repo via `nixfmt-tree`. Run it
   after changes. Passing a directory to `nixfmt` directly is deprecated, so
   format single files as `nixfmt <file>` or use `nix fmt` for the tree.
+
+## trusted-users
+
+`modules/nix.nix` sets `nix.settings.trusted-users = [ "root" my.user ]` on
+every host. `nixos-rebuild --target-host` copies an unsigned closure, and the
+target refuses it unless the pushing user is trusted:
+
+```
+error: cannot add path '/nix/store/...' because it lacks a signature by a trusted key
+```
+
+Being trusted means that user can put arbitrary paths into the store and set
+their own nix settings, which is root-equivalent on that machine. It is granted
+here because jh already has sudo on both hosts, so it widens nothing in
+practice.
+
+That stops being true the moment a host has a user who should not be root
+there, or an agent runs as that user with network access. Two ways to narrow
+it:
+
+Move the setting out of `modules/nix.nix` and into the host files that are push
+targets, so a laptop is not a trusted pusher just by existing:
+
+```nix
+nix.settings.trusted-users = [
+  "root"
+  config.my.user
+];
+```
+
+Or drop it entirely and sign the closures instead. Generate a key pair with
+`nix-store --generate-binary-cache-key`, give the target the public half in
+`nix.settings.trusted-public-keys`, and sign on the builder with
+`nix store sign --key-file`. More moving parts, but it authenticates the
+closure rather than the user, which is the right shape once more than one
+person or machine can push.

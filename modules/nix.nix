@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, inputs, ... }:
 {
   nixpkgs.config.allowUnfree = true;
 
@@ -32,6 +32,17 @@
 
     # Hardlink identical files in the store. Weekly, and slow on a large store.
     optimise.automatic = true;
+
+    # Channels are a second, unpinned nixpkgs: `nix-shell -p foo` would take
+    # whatever `nix-channel --update` last fetched rather than flake.lock.
+    channel.enable = false;
+
+    # So `nix shell nixpkgs#foo`, `nix run` and `,` resolve to the same
+    # revision the system is built from.
+    registry.nixpkgs.flake = inputs.nixpkgs;
+
+    # Keeps `<nixpkgs>` working with channels off, pointed at the same input.
+    nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
   };
 
   # nix.gc skips direnv gcroots; clear them by hand:

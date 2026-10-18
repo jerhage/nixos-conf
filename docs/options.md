@@ -115,6 +115,12 @@ profiles see [reference.md](reference.md); for restoring data see
   `pull-<name>` and `-dry`, which merge. `mirror = true` adds the deleting
   variants: deletion is opt-in per entry rather than something to remember.
   Shared flags live in `my.sync.flags`.
+- Every way of reaching nixpkgs resolves to the revision in `flake.lock`:
+  `nix.channel.enable = false` removes channels as a second unpinned source,
+  `nix.registry.nixpkgs.flake` points `nix shell nixpkgs#foo`, `nix run` and
+  `,` at the flake input, and `nix.nixPath` keeps `<nixpkgs>` working with
+  channels gone. The trade is that `nix shell` cannot hand you a package newer
+  than the system until `nix flake update`.
 - `nix fmt` formats every `.nix` file in the repo via `nixfmt-tree`. Run it
   after changes. Passing a directory to `nixfmt` directly is deprecated, so
   format single files as `nixfmt <file>` or use `nix fmt` for the tree.

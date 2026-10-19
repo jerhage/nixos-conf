@@ -7,6 +7,7 @@
     ./kernel.nix
     ./profiles
     ./proxy.nix
+    ./rustdesk.nix
     ./secrets.nix
     ./vm.nix
 

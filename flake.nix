@@ -45,7 +45,6 @@
             ./modules
             ./hosts/${name}
             { networking.hostName = name; }
-            inputs.dokseo-sync.nixosModules.default
             inputs.noctalia-greeter.nixosModules.default
             inputs.nix-index-database.nixosModules.nix-index
             inputs.sops-nix.nixosModules.sops

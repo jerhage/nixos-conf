@@ -1,6 +1,10 @@
-{ pkgs, ... }:
+{ inputs, pkgs, ... }:
 {
-  imports = [ ./hardware-configuration.nix ];
+  imports = [
+    ./hardware-configuration.nix
+    # Only cortex serves. Move to flake.nix if another host ever needs it.
+    inputs.dokseo-sync.nixosModules.default
+  ];
 
   my.user = "jh";
 
@@ -65,8 +69,7 @@
   # No app-side prefix config: it serves an API and generates no links.
   my.ankiSync.enable = true;
 
-  # The module comes from the dokseo-sync flake, so it knows nothing about
-  # sops: the secret is declared here.
+  # The module knows nothing about sops, so the secret is declared here.
   services.dokseo-sync = {
     enable = true;
     listen = "127.0.0.1:8084";

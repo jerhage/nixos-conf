@@ -74,14 +74,14 @@ not live only in sops, because sops is what you lose first.
 | `restic-password` | `modules/backup.nix`     | `secrets/cortex.yaml` | `0400` | root      |
 | `rclone-conf`     | `modules/sync-cloud.nix` | `secrets/cortex.yaml` | `0400` | `my.user` |
 | `anki-sync-users` | `modules/anki-sync.nix`  | `secrets/cortex.yaml` | `0400` | root      |
+| `dokseo-sync-password` | `hosts/cortex/default.nix` | `secrets/cortex.yaml` | `0400` | root      |
 
 A host decrypts only the secrets it declares. `my.secrets.enable` on its own
 decrypts nothing: a secret appears under `/run/secrets/<name>` because a module
 asked for it.
 
-The reverse also holds, which is easy to forget. Each of those three modules
-sets `my.secrets.enable = true` itself, because none of them can work without
-it. So `my.backup.enable = true` on a host is enough to turn sops on, with no
+The reverse also holds, which is easy to forget. Each of those modules sets
+`my.secrets.enable = true` itself, because none of them can work without it. So `my.backup.enable = true` on a host is enough to turn sops on, with no
 mention of sops in the host file. Their option descriptions say so, and to find
 out what turned it on for a given host:
 

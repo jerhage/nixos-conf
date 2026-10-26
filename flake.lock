@@ -1,5 +1,25 @@
 {
   "nodes": {
+    "dokseo-sync": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793043675,
+        "narHash": "sha256-BffUYWTwuIsLD5I5MyGVm1BNhCepPB6gTjvp2Ap2L0g=",
+        "owner": "jerhage",
+        "repo": "dokseo-sync",
+        "rev": "8175589844608a53e24cd550fbd1ef7b8b4e8467",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jerhage",
+        "repo": "dokseo-sync",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -116,6 +136,7 @@
     },
     "root": {
       "inputs": {
+        "dokseo-sync": "dokseo-sync",
         "nix-index-database": "nix-index-database",
         "nixpkgs": "nixpkgs",
         "noctalia-greeter": "noctalia-greeter",

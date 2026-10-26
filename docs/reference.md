@@ -145,9 +145,10 @@ behaviour. nucleus is `25.11` and cortex is `26.05` for that reason, and
 bumping either on an upgrade is how you silently change the semantics of things
 like default database versions.
 
-Two inputs track something other than a release branch and so may need their own
-attention: `noctalia-greeter`, whose module is unstable-only until it reaches
-stable, and `nono`, which nixpkgs lags behind.
+Three inputs track something other than a release branch and so may need their
+own attention: `noctalia-greeter`, whose module is unstable-only until it
+reaches stable, `nono`, which nixpkgs lags behind, and `dokseo-sync`, which is
+mine and ships its own package and NixOS module.
 
 ## Per-project dev environments
 

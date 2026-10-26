@@ -90,7 +90,8 @@ profiles see [reference.md](reference.md); for restoring data see
 - `my.backup`, `my.ankiSync` and `my.sync.cloud` each set
   `my.secrets.enable = true`, since all three read a secret from sops and none
   can run without it. Enabling any of them turns sops on without the host file
-  saying so.
+  saying so. `services.dokseo-sync` is the exception: its module comes from
+  another flake, so `hosts/cortex` declares that secret itself.
 - `my.dotfiles.links` is keyed on the feature that owns each path, all of it in
   `modules/dotfiles.nix`, so enabling `my.niri` brings `.config/niri` with it.
   It lives there rather than in `niri.nix` to keep the feature modules

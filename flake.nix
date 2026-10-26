@@ -3,6 +3,8 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    dokseo-sync.url = "github:jerhage/dokseo-sync";
+    dokseo-sync.inputs.nixpkgs.follows = "nixpkgs";
     # Landlock sandbox for AI agents. nixpkgs lags well behind on this one.
     nono.url = "github:always-further/nono";
     nono.inputs.nixpkgs.follows = "nixpkgs";
@@ -43,6 +45,7 @@
             ./modules
             ./hosts/${name}
             { networking.hostName = name; }
+            inputs.dokseo-sync.nixosModules.default
             inputs.noctalia-greeter.nixosModules.default
             inputs.nix-index-database.nixosModules.nix-index
             inputs.sops-nix.nixosModules.sops

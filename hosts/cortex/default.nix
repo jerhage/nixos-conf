@@ -46,6 +46,7 @@
     "/var/lib/calibre"
     "/var/lib/calibre-web" # users, shelves, reading state
     "/var/lib/anki-sync-server" # collections exist nowhere else
+    "/var/lib/dokseo-sync"
   ];
 
   my.proxy.enable = true;
@@ -57,9 +58,26 @@
   ];
   my.proxy.sites.anki.port = 8080;
 
+  # No cors list: the server sends its own headers.
+  my.proxy.sites.sync.port = 8084;
+
   # Clients point at https://<host>/anki/ -- the trailing slash matters.
   # No app-side prefix config: it serves an API and generates no links.
   my.ankiSync.enable = true;
+
+  # The module comes from the dokseo-sync flake, so it knows nothing about
+  # sops: the secret is declared here.
+  services.dokseo-sync = {
+    enable = true;
+    listen = "127.0.0.1:8084";
+    username = "jh";
+    passwordFile = "/run/secrets/dokseo-sync-password";
+    corsOrigins = [
+      "https://reader.gongbu.me"
+      "http://localhost:5173"
+    ];
+  };
+  sops.secrets.dokseo-sync-password.mode = "0400";
 
   # Upstream builds filename* from the romanised name, so downloads lose Korean.
   # Drop this once nixpkgs ships calibre-web newer than the 2026-03-01 nightly.

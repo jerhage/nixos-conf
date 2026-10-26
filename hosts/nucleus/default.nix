@@ -14,6 +14,16 @@
   my.nvidia.enable = true;
   my.zram.enable = true;
   my.gaming.enable = true;
+  my.gaming.streaming.enable = true;
+  my.gaming.client.enable = true;
+
+  # No 3:2 mode here for helix's panel; 16:9 wastes less of it than 21:9.
+  my.gaming.streaming.prepCommands = [
+    {
+      do = "niri msg output DP-3 mode 1920x1080@143.847";
+      undo = "niri msg output DP-3 mode 3440x1440@164.900";
+    }
+  ];
   my.virtualisation.enable = true;
   my.ssh.server.enable = true;
   my.ssh.server.interfaces = [

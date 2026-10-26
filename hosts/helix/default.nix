@@ -16,8 +16,6 @@
 
   my.devtools.enable = true;
   my.gaming.client.enable = true;
-  # need for steam controller to work through moonlight
-  programs.steam.enable = true;
 
   my.greeter.backend = "noctalia";
 

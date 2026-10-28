@@ -48,6 +48,12 @@ Two things worth noting cause it messed me up:
 - **Verify with a restore, never a file count.** The first snapshot here exited
   cleanly, reported 20.8 GiB and listed every path, while containing none of
   the anki data.
+- **A SQLite database in WAL mode is three files**, which restic reads at
+  different moments, so a checkpoint during the snapshot can cost the most
+  recent transactions. `my.backup.sqliteDatabases` copies each one with
+  sqlite's online backup under `/var/lib/restic-sqlite` before the snapshot,
+  and that copy is the one to restore from. The live files are still in the
+  snapshot.
 
 The repo password lives in sops as `restic-password` and in 1Password. It has to
 be in both: the snapshots are what you reach for after losing a machine, and a

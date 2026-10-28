@@ -52,6 +52,11 @@
     "/var/lib/anki-sync-server" # collections exist nowhere else
     "/var/lib/dokseo-sync"
   ];
+  my.backup.sqliteDatabases = [
+    "/var/lib/calibre/metadata.db"
+    "/var/lib/calibre-web/app.db"
+    "/var/lib/dokseo-sync/dokseo-sync.db"
+  ];
 
   my.proxy.enable = true;
   my.proxy.tailscaleServe = true;

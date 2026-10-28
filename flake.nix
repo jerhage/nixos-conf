@@ -3,7 +3,8 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
-    dokseo-sync.url = "github:jerhage/dokseo-sync";
+    # Bump this tag to upgrade; nix flake update leaves a pinned tag alone.
+    dokseo-sync.url = "github:jerhage/dokseo-sync/v0.1.3";
     dokseo-sync.inputs.nixpkgs.follows = "nixpkgs";
     # Landlock sandbox for AI agents. nixpkgs lags well behind on this one.
     nono.url = "github:always-further/nono";

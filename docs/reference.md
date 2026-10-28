@@ -150,6 +150,9 @@ own attention: `noctalia-greeter`, whose module is unstable-only until it
 reaches stable, `nono`, which nixpkgs lags behind, and `dokseo-sync`, which is
 mine and ships its own package and NixOS module.
 
+`dokseo-sync` is pinned to a tag, so `nix flake update` leaves it alone.
+Upgrading it means editing the version in the input URL.
+
 ## Per-project dev environments
 
 System-wide toolchains come from `my.devtools.languages`. For a project that

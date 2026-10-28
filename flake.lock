@@ -7,15 +7,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1793043675,
-        "narHash": "sha256-BffUYWTwuIsLD5I5MyGVm1BNhCepPB6gTjvp2Ap2L0g=",
+        "lastModified": 1793197189,
+        "narHash": "sha256-F/EBFrl3BPoMZmrzHTr0XqQlPeZbXuiVreY3cXS2h2Y=",
         "owner": "jerhage",
         "repo": "dokseo-sync",
-        "rev": "8175589844608a53e24cd550fbd1ef7b8b4e8467",
+        "rev": "0b22bcb47e8127b618bbfafd7045737826a86d55",
         "type": "github"
       },
       "original": {
         "owner": "jerhage",
+        "ref": "v0.1.3",
         "repo": "dokseo-sync",
         "type": "github"
       }
